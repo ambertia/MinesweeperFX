@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "--module-path /usr/lib/jvm/java-20-openjdk/lib --add-modules javafx.controls"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "MinesweeperFX_423adeaf"
+        },
+        {
+            "type": "java",
+            "name": "MinesweeperGame",
+            "request": "launch",
+            "mainClass": "MinesweeperGame",
+            "projectName": "MinesweeperFX_423adeaf"
+        }
+    ]
+}

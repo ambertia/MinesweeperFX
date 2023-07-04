@@ -20,9 +20,7 @@ public class MinesweeperGame extends Application{
 
     public void start(Stage primaryStage) {
         GameBoard activeGameBoard = new GameBoard();
-        System.out.println("Layout finished");
         final Scene gameplayScene = new Scene(activeGameBoard, 600, 400);
-        System.out.println("Scene finished");
         primaryStage.setScene(gameplayScene);
         primaryStage.show();
     }

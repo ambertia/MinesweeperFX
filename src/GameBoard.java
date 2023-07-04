@@ -12,23 +12,26 @@ public class GameBoard extends TilePane {
     private int totalColumns;
     private int totalRows;
     // private ArrayList<Integer> mineLocations;
-    // private SimpleDoubleProperty tileSize;
+    private SimpleDoubleProperty tileSize;
 
     private static int DEFAULT_COLUMNS = 40;
     private static int DEFAULT_ROWS = 20;
 
     GameBoard() {
         super(Orientation.HORIZONTAL);
+        totalColumns = DEFAULT_COLUMNS;
+        totalRows = DEFAULT_ROWS;
         this.setPrefColumns(DEFAULT_COLUMNS);
         // this.mineFraction = 0.15;
         // this.generateMineLocations();
         this.initGameCells();
-        /* this.setPrefTileHeight(10);
-        this.setPrefTileWidth(10); */
-        /* this.tileSize = new SimpleDoubleProperty();
+        this.setPrefTileHeight(20);
+        this.setPrefTileWidth(20);
+        this.tileSize = new SimpleDoubleProperty();
         refreshTileSize();
         this.prefTileHeightProperty().bind(tileSize);
-        this.prefTileWidthProperty().bind(tileSize); */
+        this.prefTileWidthProperty().bind(tileSize);
+        this.heightProperty().addListener((v, oldValue, newValue) -> refreshTileSize());
     }
 
     /* private void generateMineLocations() {
@@ -48,15 +51,14 @@ public class GameBoard extends TilePane {
 
     private void initGameCells() {
         for (int cellIndex = 0; cellIndex < (this.totalColumns*this.totalRows); cellIndex++) {
-            System.out.println("adding cell " + cellIndex);
             final GameCell newCell = new GameCell();
             this.getChildren().add(newCell);
         }
     }
 
-    /* private void refreshTileSize() {
+    private void refreshTileSize() {
         final double maxHeightConstraint = this.getHeight()/this.getPrefColumns();
         final double maxWidthConstraint = this.getWidth()/((this.totalColumns*this.totalRows)/this.getPrefColumns());
         this.tileSize.set(Math.min(maxHeightConstraint, maxWidthConstraint));
-    } */
+    }
 }

@@ -1,9 +1,15 @@
 import java.util.Random;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -20,7 +26,33 @@ public class MinesweeperGame extends Application{
 
     public void start(Stage primaryStage) {
         GameBoard activeGameBoard = new GameBoard();
-        final Scene gameplayScene = new Scene(activeGameBoard, 600, 400);
+        ScrollPane gameBoardWrapper = new ScrollPane(activeGameBoard);
+        BorderPane activeGameScene = new BorderPane();
+        MenuBar appMenuBar = new MenuBar();
+        Menu viewMenu = new Menu("View");
+        MenuItem zoomInMenuItem = new MenuItem("Zoom In");
+        zoomInMenuItem.setOnAction(e -> {
+            activeGameBoard.zoomIn();
+        });
+        MenuItem zoomOutMenuItem = new MenuItem("Zoom Out");
+        zoomOutMenuItem.setOnAction(e -> {
+            activeGameBoard.zoomOut();
+        });
+
+        Menu zoomViewMenu = new Menu("Zoom: ");
+        activeGameBoard.scaleXProperty().addListener((v, oldValue, newValue) -> {
+            zoomViewMenu.textProperty().setValue("Zoom: " + activeGameBoard.getScales());
+        });
+
+        activeGameScene.setCenter(gameBoardWrapper);
+        activeGameScene.setTop(appMenuBar);
+        appMenuBar.getMenus().addAll(viewMenu, zoomViewMenu);
+        viewMenu.getItems().addAll(zoomInMenuItem,zoomOutMenuItem);
+        //gameBoardWrapper.setFitToHeight(true);
+        //gameBoardWrapper.setFitToWidth(true);
+        // gameBoardWrapper.setPannable(true);
+        final Scene gameplayScene = new Scene(activeGameScene, 800, 600);
+        activeGameBoard.getStylesheets().add("GameStyleControl.css");
         primaryStage.setScene(gameplayScene);
         primaryStage.show();
     }

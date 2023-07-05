@@ -36,6 +36,10 @@ cell
 Development course:
 - Window layout with all labels present
     - Auto-resize elements related to window
+    - Find a way to auto resize only at specific integer pixel sizes based on row/col
+      count
+    - Could nest gameboard inside a ScrollPane if necessary, otherwise center in available
+      space
 - Generate board and display mines on grid
 - Click detection output to console based on mine state
 - Update all initial labels with numbers

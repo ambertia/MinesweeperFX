@@ -11,9 +11,9 @@ import javafx.scene.paint.Color;
 public class GameCell extends Label {
 
     public static double MAX_CELL_SIZE = 25;
-    public static double MIN_CELL_SIZE = 15;
-    public static BorderStroke cellBorderStroke = new BorderStroke(Color.BLACK, null, null, BorderStroke.MEDIUM);
-    public static Border cellBorder = new Border(cellBorderStroke);
+    public static double MIN_CELL_SIZE = 25;
+    // public static BorderStroke cellBorderStroke = new BorderStroke(Color.BLACK, null, null, BorderStroke.MEDIUM);
+    // public static Border cellBorder = new Border(cellBorderStroke);
 
     GameCell() {
         super("*");
@@ -25,7 +25,6 @@ public class GameCell extends Label {
         setMaxSize(MAX_CELL_SIZE, USE_PREF_SIZE);
         prefHeightProperty().bind(widthProperty());
         setAlignment(Pos.CENTER);
-        setBorder(cellBorder);
     }
     /* private boolean mine;
     private boolean shown;

@@ -6,6 +6,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
@@ -18,33 +21,24 @@ public class GameBoard extends GridPane {
     private int totalColumns;
     private int totalRows;
     // private ArrayList<Integer> mineLocations;
-    // private SimpleDoubleProperty tileSize;
-
     private static int DEFAULT_COLUMNS = 40;
     private static int DEFAULT_ROWS = 20;
 
     GameBoard() {
-        // super(Orientation.HORIZONTAL);
         totalColumns = DEFAULT_COLUMNS;
         totalRows = DEFAULT_ROWS;
-        // this.setPrefColumns(DEFAULT_COLUMNS);
         // this.mineFraction = 0.15;
         // this.generateMineLocations();
         initGameCells();
-        // this.setPrefTileHeight(20);
-        // this.setPrefTileWidth(20);
-        // this.tileSize = new SimpleDoubleProperty();
-        // refreshTileSize();
-        // this.prefTileHeightProperty().bind(tileSize);
-        // this.prefTileWidthProperty().bind(tileSize);
-        // this.widthProperty().addListener((v, oldValue, newValue) -> refreshTileSize());
-        setAlignment(Pos.CENTER);
+        // setAlignment(Pos.CENTER);
         setGridLinesVisible(false);
 
         setMinWidth(totalColumns * GameCell.MIN_CELL_SIZE);
         setMinHeight(totalRows * GameCell.MIN_CELL_SIZE);
         setMaxWidth(totalColumns * GameCell.MAX_CELL_SIZE);
         setMaxHeight(totalRows * GameCell.MAX_CELL_SIZE);
+        setScaleX(1.);
+        setScaleY(1.);
     }
 
     /* private void generateMineLocations() {
@@ -70,21 +64,30 @@ public class GameBoard extends GridPane {
         }
     }
 
-    /* private void refreshTileSize() {
-        // If ratio of desired board size to 
-        if ((totalColumns/totalRows) >= this.getWidth()/this.getHeight()) {
-
-        }
+    /* public ScrollPane getWrapper() {
+        final Group wrapGroup = new Group(this);
+        // wrapGroup.setAutoSizeChildren(false);
+        final ScrollPane newWrapper = new ScrollPane(wrapGroup);
+        newWrapper.setPannable(true);
+        newWrapper.addEventFilter(ScrollEvent.ANY, e -> {
+            final double thisScrollDistance = e.getDeltaY();
+            System.out.println(thisScrollDistance);
+            if (thisScrollDistance > 0) this.zoomIn();
+            else if (thisScrollDistance < 0) this.zoomOut();
+        });
+        newWrapper.setFitToHeight(true);
+        newWrapper.setFitToWidth(true);
+        return newWrapper;
     } */
 
     public void zoomIn() {
-        setScaleX(Math.min(getScaleX() + 0.2, 1.6));
-        setScaleY(Math.min(getScaleY() + 0.2, 1.6));
+        setScaleX(Math.min(getScaleX() + 0.2, 2.4));
+        setScaleY(Math.min(getScaleY() + 0.2, 2.4));
     }
 
     public void zoomOut() {
-        setScaleX(Math.max(getScaleX() - 0.2, 0.6));
-        setScaleY(Math.max(getScaleY() - 0.2, 0.6));
+        setScaleX(Math.max(getScaleX() - 0.2, 0.4));
+        setScaleY(Math.max(getScaleY() - 0.2, 0.4));
     }
 
     public String getScales() {

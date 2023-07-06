@@ -3,17 +3,19 @@ import java.util.Random;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class MinesweeperGame extends Application{
+public class MinesweeperGame extends Application {
 
     // Game specification constants
     /* static int GAME_SIZE_COLUMNS = 40;
@@ -26,10 +28,11 @@ public class MinesweeperGame extends Application{
 
     public void start(Stage primaryStage) {
         GameBoard activeGameBoard = new GameBoard();
-        ScrollPane gameBoardWrapper = new ScrollPane(activeGameBoard);
+        // ScrollPane gameBoardWrapper = activeGameBoard.getWrapper();
+        ZoomableScrollPane gameBoardWrapper = new ZoomableScrollPane(activeGameBoard);
         BorderPane activeGameScene = new BorderPane();
         MenuBar appMenuBar = new MenuBar();
-        Menu viewMenu = new Menu("View");
+        /* Menu viewMenu = new Menu("View");
         MenuItem zoomInMenuItem = new MenuItem("Zoom In");
         zoomInMenuItem.setOnAction(e -> {
             activeGameBoard.zoomIn();
@@ -37,20 +40,20 @@ public class MinesweeperGame extends Application{
         MenuItem zoomOutMenuItem = new MenuItem("Zoom Out");
         zoomOutMenuItem.setOnAction(e -> {
             activeGameBoard.zoomOut();
-        });
+        }); */
 
-        Menu zoomViewMenu = new Menu("Zoom: ");
+        /* Menu zoomViewMenu = new Menu("Zoom: ");
         activeGameBoard.scaleXProperty().addListener((v, oldValue, newValue) -> {
             zoomViewMenu.textProperty().setValue("Zoom: " + activeGameBoard.getScales());
-        });
+        }); */
+
 
         activeGameScene.setCenter(gameBoardWrapper);
         activeGameScene.setTop(appMenuBar);
-        appMenuBar.getMenus().addAll(viewMenu, zoomViewMenu);
-        viewMenu.getItems().addAll(zoomInMenuItem,zoomOutMenuItem);
-        //gameBoardWrapper.setFitToHeight(true);
-        //gameBoardWrapper.setFitToWidth(true);
-        // gameBoardWrapper.setPannable(true);
+        // appMenuBar.getMenus().addAll(viewMenu, zoomViewMenu);
+        // viewMenu.getItems().addAll(zoomInMenuItem,zoomOutMenuItem);
+        // gameBoardWrapper.setFitToHeight(true);
+        // gameBoardWrapper.setFitToWidth(true);
         final Scene gameplayScene = new Scene(activeGameScene, 800, 600);
         activeGameBoard.getStylesheets().add("GameStyleControl.css");
         primaryStage.setScene(gameplayScene);

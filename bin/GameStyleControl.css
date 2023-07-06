@@ -4,4 +4,5 @@
 .label {
     -fx-background-color: #aaaaaa;
     -fx-text-fill: #d11a1a;
+    -fx-border-color: #4477CC;
 }

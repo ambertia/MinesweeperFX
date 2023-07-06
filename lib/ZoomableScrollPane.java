@@ -11,9 +11,13 @@ import javafx.scene.layout.VBox;
 
 public class ZoomableScrollPane extends ScrollPane {
     private double scaleValue = 0.7;
-    private double zoomIntensity = 0.02;
+    private double zoomIntensity = 0.01;
     private Node target;
     private Node zoomNode;
+
+    // Custom quantities
+    private double maxScaleValue = 5;
+    private double minScaleValue = 0.2;
 
     public ZoomableScrollPane(Node target) {
         super();
@@ -63,7 +67,11 @@ public class ZoomableScrollPane extends ScrollPane {
         double valX = this.getHvalue() * (innerBounds.getWidth() - viewportBounds.getWidth());
         double valY = this.getVvalue() * (innerBounds.getHeight() - viewportBounds.getHeight());
 
+        // Modification to allow max & min scaleValues i.e. bounding user's ability to zoom in or out
         scaleValue = scaleValue * zoomFactor;
+        scaleValue = Double.min(scaleValue, maxScaleValue);
+        scaleValue = Double.max(scaleValue, minScaleValue);
+
         System.out.println("scaleValue: " + scaleValue);
         updateScale();
         this.layout(); // refresh ScrollPane scroll positions & target bounds

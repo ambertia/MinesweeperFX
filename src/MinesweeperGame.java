@@ -28,7 +28,6 @@ public class MinesweeperGame extends Application {
 
     public void start(Stage primaryStage) {
         GameBoard activeGameBoard = new GameBoard();
-        // ScrollPane gameBoardWrapper = activeGameBoard.getWrapper();
         ZoomableScrollPane gameBoardWrapper = new ZoomableScrollPane(activeGameBoard);
         BorderPane activeGameScene = new BorderPane();
         MenuBar appMenuBar = new MenuBar();
@@ -54,8 +53,9 @@ public class MinesweeperGame extends Application {
         // viewMenu.getItems().addAll(zoomInMenuItem,zoomOutMenuItem);
         // gameBoardWrapper.setFitToHeight(true);
         // gameBoardWrapper.setFitToWidth(true);
-        final Scene gameplayScene = new Scene(activeGameScene, 800, 600);
+        final Scene gameplayScene = new Scene(activeGameScene, 1280, 720);
         activeGameBoard.getStylesheets().add("GameStyleControl.css");
+        primaryStage.setTitle("MinesweeperFX");
         primaryStage.setScene(gameplayScene);
         primaryStage.show();
     }

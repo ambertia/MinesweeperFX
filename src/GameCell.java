@@ -2,29 +2,47 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 
 public class GameCell extends Label {
 
     public static double MAX_CELL_SIZE = 25;
     public static double MIN_CELL_SIZE = 25;
+    public static double CELL_SIZE = 25;
+    private boolean hasMine;
+    private boolean revealed;
+    /* private GameCell upCell;
+    private GameCell downCell;
+    private GameCell leftCell;
+    private GameCell rightCell; */
     // public static BorderStroke cellBorderStroke = new BorderStroke(Color.BLACK, null, null, BorderStroke.MEDIUM);
     // public static Border cellBorder = new Border(cellBorderStroke);
 
-    GameCell() {
-        super("*");
-        GridPane.setHgrow(this, Priority.ALWAYS);
-        GridPane.setVgrow(this, Priority.ALWAYS);
+    GameCell(boolean hasMine) {
+        super(hasMine ? "*" : " ");
         GridPane.setHalignment(this, HPos.CENTER);
         GridPane.setValignment(this, VPos.CENTER);
-        setMinSize(MIN_CELL_SIZE, USE_PREF_SIZE);
-        setMaxSize(MAX_CELL_SIZE, USE_PREF_SIZE);
-        prefHeightProperty().bind(widthProperty());
+        setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        setPrefSize(CELL_SIZE, CELL_SIZE);
         setAlignment(Pos.CENTER);
+        this.hasMine = hasMine;
+        revealed = false;
+
+        setOnMouseClicked(e -> {
+            System.out.println(e.toString());
+            if (!e.getButton().equals(MouseButton.PRIMARY)) return;
+            if (!e.isStillSincePress()) return;            revealed = true;
+            updateLabel();
+        });
+    }
+    GameCell() {
+        this(true);
+    }
+
+    private void updateLabel() {
+        if (hasMine) setText("M");
+        else setText("E");
     }
     /* private boolean mine;
     private boolean shown;
@@ -62,11 +80,11 @@ public class GameCell extends Label {
     }
     public void setShown(boolean shown) {
         this.shown = shown;
-    }
-    public int getNeighbors() {
+    } */
+    /* public ArrayList<GameCell> getNeighbors() {
         return neighbors;
     }
-    public void setNeighbors(int neighbors) {
+    public void setNeighbors(ArrayList<GameCell> neighbors) {
         this.neighbors = neighbors;
-    }         */
+    } */
 }

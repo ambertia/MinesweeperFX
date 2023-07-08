@@ -6,3 +6,6 @@
     -fx-text-fill: #d11a1a;
     -fx-border-color: #4477CC;
 }
+.vbox {
+    -fx-background-color: #ff00ff;
+}

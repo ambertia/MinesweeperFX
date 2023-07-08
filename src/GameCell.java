@@ -7,19 +7,18 @@ import javafx.scene.layout.GridPane;
 
 public class GameCell extends Label {
 
-    public static double MAX_CELL_SIZE = 25;
-    public static double MIN_CELL_SIZE = 25;
+    // public static double MAX_CELL_SIZE = 25;
+    // public static double MIN_CELL_SIZE = 25;
     public static double CELL_SIZE = 25;
     private boolean hasMine;
     private boolean revealed;
-    /* private GameCell upCell;
-    private GameCell downCell;
-    private GameCell leftCell;
-    private GameCell rightCell; */
+    private GameCell[] neighbors;
+    private GameBoard parent;
+    private int adjacentMines;
     // public static BorderStroke cellBorderStroke = new BorderStroke(Color.BLACK, null, null, BorderStroke.MEDIUM);
     // public static Border cellBorder = new Border(cellBorderStroke);
 
-    GameCell(boolean hasMine) {
+    GameCell(boolean hasMine, int nearbyMines) {
         super(hasMine ? "*" : " ");
         GridPane.setHalignment(this, HPos.CENTER);
         GridPane.setValignment(this, VPos.CENTER);
@@ -28,22 +27,47 @@ public class GameCell extends Label {
         setAlignment(Pos.CENTER);
         this.hasMine = hasMine;
         revealed = false;
+        adjacentMines = nearbyMines;
 
-        setOnMouseClicked(e -> {
+        /* setOnMouseClicked(e -> {
             System.out.println(e.toString());
             if (!e.getButton().equals(MouseButton.PRIMARY)) return;
-            if (!e.isStillSincePress()) return;            revealed = true;
-            updateLabel();
-        });
+            if (!e.isStillSincePress()) return;
+            processRevealEvent();
+        }); */
     }
     GameCell() {
-        this(true);
+        this(true, 0);
     }
 
     private void updateLabel() {
-        if (hasMine) setText("M");
-        else setText("E");
+        if (!revealed) setText("");
+        else if (hasMine) setText("M");
+        else setText(String.valueOf(adjacentMines));
     }
+
+    public void setNeighbors(GameCell[] providedNeighbors) {
+        neighbors = providedNeighbors;
+    }
+
+    public void setParent(GameBoard newBoard) {
+        parent = newBoard;
+    }
+
+    public void processRevealEvent() {
+        revealed = true;
+        updateLabel();
+        if (adjacentMines == 0) parent.waterfallNeighbors(this);
+    }
+
+    public int getAdjacentMines() {
+        return adjacentMines;
+    }
+
+    public void setAdjacentMines(int totalMines) {
+        adjacentMines = totalMines;
+    }
+
     /* private boolean mine;
     private boolean shown;
     private int neighbors;

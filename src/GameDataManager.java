@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameDataManager {
+
+    // Instance properties
     private int totalColumns;
     private int totalRows;
     private ArrayList<Integer> mineLocations;
@@ -10,11 +12,16 @@ public class GameDataManager {
     // Full featured constructor
     GameDataManager(int gameColumns, int gameRows, double mineFraction) {
         System.out.println("Start of GameDataManager");
+
+        // Assign dimensions
         totalColumns = gameColumns;
         totalRows = gameRows;
+
+        // Calculate number of mines & prepare ArrayList and Random to generate mine lcoations
         int minesToGenerate = Double.valueOf(gameColumns * gameRows * mineFraction).intValue();
         mineLocations = new ArrayList<>(minesToGenerate);
         Random mineGenerator = new Random();
+        // Roll locations and record unique locations until enough mine locations have been marked
         while (minesToGenerate > 0) {
             final int rolledIndex = mineGenerator.nextInt(gameColumns * gameRows);
             if (mineLocations.contains(rolledIndex)) continue;
@@ -22,7 +29,9 @@ public class GameDataManager {
             minesToGenerate--;
         }
 
+        // Prepare appropriately sized array for cell state data
         cellData = new GameCell[gameColumns * gameRows];
+        // Initialize all cells & store number of neighboring mines
         for (int cellIndex = 0; cellIndex < cellData.length; cellIndex++) {
             cellData[cellIndex] = new GameCell();
             cellData[cellIndex].nearbyMines = processNeighborMines(getNeighborIndices(cellIndex));
@@ -32,13 +41,16 @@ public class GameDataManager {
 
     // Return a list of valid neighbor indices provided a subject cell index
     private ArrayList<Integer> getNeighborIndices(int activeCellIndex) {
+        // Initialize a list for cell indices
         final ArrayList<Integer> activeCellNeighbors = new ArrayList<>();
 
+        // Use cell index & board parameters to determine whether a cell rests on any edges of the board
         final boolean atTopEdge = (activeCellIndex / totalColumns == 0);
         final boolean atRightEdge = ((activeCellIndex % totalColumns) == totalColumns - 1);
         final boolean atBottomEdge = ((activeCellIndex / totalColumns) == totalRows - 2);
         final boolean atLeftEdge = (activeCellIndex % totalColumns == 0);
 
+        // Add all valid neighbor cells depending on which edges the cell is or is not resting on
         if (!atTopEdge) {
             if (!atLeftEdge) activeCellNeighbors.add(activeCellIndex - totalColumns - 1);
             activeCellNeighbors.add(activeCellIndex - totalColumns);
@@ -52,6 +64,7 @@ public class GameDataManager {
             if (!atRightEdge) activeCellNeighbors.add(activeCellIndex + totalColumns + 1);
         }
 
+        // Return the final list of cell indices
         return activeCellNeighbors;
     }
 
@@ -63,20 +76,15 @@ public class GameDataManager {
         return neighborMines;
     }
 
-    public String flagEvent(int cellIndex) {
-        System.out.println("Flag event " + cellIndex);
-        cellData[cellIndex].flagged = cellData[cellIndex].flagged ? false : true;
-        return cellData[cellIndex].getLabel();
-    }
-
+    
     public boolean isMine(int cellIndex) {
         return mineLocations.contains(cellIndex);
     }
-
+    
     public boolean isFlagged(int cellIndex) {
         return cellData[cellIndex].flagged;
     }
-
+    
     public boolean isRevealed(int cellIndex) {
         return cellData[cellIndex].revealed;
     }
@@ -84,11 +92,25 @@ public class GameDataManager {
     public int getAdjacentMines(int cellIndex) {
         return cellData[cellIndex].nearbyMines;
     }
+    
+    public String flagEvent(int cellIndex) {
+        System.out.println("Flag event " + cellIndex);
+        cellData[cellIndex].flagged = cellData[cellIndex].flagged ? false : true;
+        return cellData[cellIndex].getLabel();
+    }
 
-    public String revealCell(int cellIndex) {
+    public String revealEvent(int cellIndex) {
         System.out.println("Revealed " + cellIndex);
         cellData[cellIndex].revealed = true;
         return cellData[cellIndex].getLabel();
+    }
+
+    public void waterfallReveal(int cellIndex) {
+
+    }
+
+    public void fetchWaterfallPool() {
+        
     }
 
     // Unit test method - Generated a mine board and table of neighboring mine counts, and print them
@@ -116,6 +138,7 @@ public class GameDataManager {
         System.out.println();
     }
 
+    /* Internal class to represent state information of a particular cell */
     private class GameCell {
         private boolean revealed;
         private boolean hasMine;

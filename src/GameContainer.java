@@ -12,7 +12,8 @@ import javafx.scene.layout.GridPane;
 public class GameContainer extends GridPane {
     private int totalColumns;
     private int totalRows;
-    private GameDataManager thisGameDataManager;
+    private GameDataManager thisDataManager;
+    private GameInteractionManager thisInteractionManager;
     private ArrayList<Label> gameTiles;
     private static double CELL_SIZE = 25;
 
@@ -22,7 +23,8 @@ public class GameContainer extends GridPane {
         totalColumns = gameColumns;
         totalRows = gameRows;
 
-        thisGameDataManager = new GameDataManager(gameColumns, gameRows, GameDefaults.MINE_FRACTION);
+        thisDataManager = new GameDataManager(gameColumns, gameRows, GameDefaults.MINE_FRACTION);
+        thisInteractionManager = new GameInteractionManager();
 
         gameTiles = new ArrayList<>(gameColumns * gameRows);
         for (int cellIndex = 0; cellIndex < gameColumns * gameRows; cellIndex++) {
@@ -46,15 +48,15 @@ public class GameContainer extends GridPane {
 
     private void handleInteractionEvent(GameCellInteractionEvent e) {
         final int activeCellIndex = (e.getLocation().y * totalColumns) + e.getLocation().x;
-        if (thisGameDataManager.isRevealed(activeCellIndex)) return;
-        if (e.getTrigger().getButton().equals(MouseButton.PRIMARY) && !thisGameDataManager.isFlagged(activeCellIndex))
-            gameTiles.get(activeCellIndex).setText(thisGameDataManager.revealCell(activeCellIndex));
+        if (thisDataManager.isRevealed(activeCellIndex)) return;
+        if (e.getTrigger().getButton().equals(MouseButton.PRIMARY) && !thisDataManager.isFlagged(activeCellIndex))
+            gameTiles.get(activeCellIndex).setText(thisDataManager.revealEvent(activeCellIndex));
         if (e.getTrigger().getButton().equals(MouseButton.SECONDARY))
-            gameTiles.get(activeCellIndex).setText(thisGameDataManager.flagEvent(activeCellIndex));;
+            gameTiles.get(activeCellIndex).setText(thisDataManager.flagEvent(activeCellIndex));
     }
     
     // Factory method to produce a label with desired characteristics
-    public static Label gameLabelFactory() {
+    private static Label gameLabelFactory() {
         // Create new label object
         final Label newLabel = new Label(" ");
 

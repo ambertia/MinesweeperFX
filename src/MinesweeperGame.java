@@ -13,13 +13,13 @@ public class MinesweeperGame extends Application {
 
     public void start(Stage primaryStage) {
         GameContainer activeGame = new GameContainer();
-        StackPane gameBoardWrapper = new StackPane(new ZoomableScrollPane(activeGame));
+        ZoomableScrollPane gameBoardWrapper = new ZoomableScrollPane(activeGame);
         BorderPane activeGameDisplay = new BorderPane();
 
         activeGameDisplay.setCenter(gameBoardWrapper);
 
         final Scene gameplayScene = new Scene(activeGameDisplay, 1280, 720);
-        activeGame.getStylesheets().add("GameStyleControl.css");
+        gameplayScene.setUserAgentStylesheet("GameStyleControl.css");
         primaryStage.setTitle("MinesweeperFX");
         primaryStage.setScene(gameplayScene);
         primaryStage.show();

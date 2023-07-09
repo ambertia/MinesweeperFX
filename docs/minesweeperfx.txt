@@ -6,42 +6,18 @@ Basic functionality outline:
 - Popup window or in-game notification for win/loss/new game
 
 Class structure
-- Overarching application class to manage window(s), change scenes, i/o, flow of game
-- Game board to contain all board information & process changes
-	- Can be instanced class to allow entire board to be discarded at once
-	- Extending GridPane could allow direct management of game cells as their own
-	  extended objects
-- Game cell to hold information & actions for cells i.e. process clicks, change label
-	- Extending a label or button would work well to allow management directly by game
-	  grid
+MinesweeperGame: Application extension to manage game scenes and high-level functions
+GameContainer: Displayable object to manage active game UI elements, contain and reference
+a data manager
+GameDataManager: Manage the game state, process changes in game state and retreive cell
+information
 
-How to structure cells into board?
-- cell[][] - Causes problems trying to add all cells due to nested array structure,
-but simple to track x,y pos of cell on the board
-- List<cell> - Less intuitive x,y pos, but can be determined by modulo & division
-  operations using row size easily. More straightforward to iterate over & add Collection
-to a layout using addAll()
-
-Core representations of board state
-- Every cell has a yes/no value whether a mine is present
-- Every cell is either shown or hidden - Empty cells (no neighbors or mine) must be
-  distinguishable from hidden cells
-- Every cell needs to manage its JavaFX object representation in board GUI, which can be
-  arranged by the game board
-- Game needs to easily reference # of neighboring mines & occasionally update neighboring
-  cells - could be useful to store neighboring mines in the cell, but not strictly
-necessary since that information is only useful when updating the label of a non-mine
-cell
-
-Development course:
-- Window layout with all labels present
-    - Auto-resize elements related to window
-    - Find a way to auto resize only at specific integer pixel sizes based on row/col
-      count
-    - Could nest gameboard inside a ScrollPane if necessary, otherwise center in available
-      space
-- Generate board and display mines on grid
-- Click detection output to console based on mine state
-- Update all initial labels with numbers
-- Click-to-reveal nodes
-- Reveal all empty space
+To-do list:
+- Implement function to reveal whole areas of the board with no neighbors: If nearbyMines
+  = 0, reveal all neighbors and/or add to waterfall pool?
+- New gamestate processor class? Would help split some functionality off of GameContainer & GameDataManager
+- Implement style changes incl. differentiating revealed tiles with no mines from
+  unrevealed tiles (shadow/highlight?)
+- Implement menu bar functions
+- Implement extra game functions e.g. remaining mines to flag
+- Implement check on cell reveal for game state

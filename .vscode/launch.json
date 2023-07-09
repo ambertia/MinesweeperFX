@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "GameDataManager",
+            "request": "launch",
+            "mainClass": "GameDataManager",
+            "projectName": "MinesweeperFX_423adeaf",
+            "vmArgs": "--module-path /usr/lib/jvm/java-20-openjdk/lib --add-modules javafx.controls"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
@@ -16,14 +24,16 @@
             "name": "App",
             "request": "launch",
             "mainClass": "App",
-            "projectName": "MinesweeperFX_423adeaf"
+            "projectName": "MinesweeperFX_423adeaf",
+            "vmArgs": "--module-path /usr/lib/jvm/java-20-openjdk/lib --add-modules javafx.controls"
         },
         {
             "type": "java",
             "name": "MinesweeperGame",
             "request": "launch",
             "mainClass": "MinesweeperGame",
-            "projectName": "MinesweeperFX_423adeaf"
+            "projectName": "MinesweeperFX_423adeaf",
+            "vmArgs": "--module-path /usr/lib/jvm/java-20-openjdk/lib --add-modules javafx.controls"
         }
     ]
 }

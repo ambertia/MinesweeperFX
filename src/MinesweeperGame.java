@@ -12,7 +12,7 @@ public class MinesweeperGame extends Application {
     }
 
     public void start(Stage primaryStage) {
-        GameContainer activeGame = new GameContainer();
+        GameContainer activeGame = new GameContainer(new GameSpecification());
         ZoomableScrollPane gameBoardWrapper = new ZoomableScrollPane(activeGame);
         BorderPane activeGameDisplay = new BorderPane();
 

@@ -4,8 +4,8 @@
 .label {
     -fx-background-color: #aaaaaa;
     -fx-text-fill: #d11a1a;
-    -fx-border-color: #4477CC;
+    -fx-border-color: #353535;
 }
-.vbox {
-    -fx-background-color: #ff00ff;
+#revealed-cell {
+    -fx-background-color: #888888;
 }

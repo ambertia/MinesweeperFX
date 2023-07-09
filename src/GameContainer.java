@@ -1,60 +1,68 @@
 import java.util.ArrayList;
 
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 
 public class GameContainer extends GridPane {
-    private int totalColumns;
-    private int totalRows;
+    private boolean gameOpeningCondition;
     private GameDataManager thisDataManager;
     private GameInteractionManager thisInteractionManager;
+    private GameSpecification thisGameSpec;
     private ArrayList<Label> gameTiles;
     private static double CELL_SIZE = 25;
 
     // Full constructor for GameContainer
-    GameContainer(int gameColumns, int gameRows) {
+    GameContainer(GameSpecification gameSpec) {
         System.out.println("Start of GameContainer");
-        totalColumns = gameColumns;
-        totalRows = gameRows;
+        thisGameSpec = gameSpec;
+        gameOpeningCondition = true;
+        thisDataManager = new GameDataManager(this, thisGameSpec);
+        thisInteractionManager = new GameInteractionManager(thisGameSpec, thisDataManager);
 
-        thisDataManager = new GameDataManager(gameColumns, gameRows, GameDefaults.MINE_FRACTION);
-        thisInteractionManager = new GameInteractionManager();
-
-        gameTiles = new ArrayList<>(gameColumns * gameRows);
-        for (int cellIndex = 0; cellIndex < gameColumns * gameRows; cellIndex++) {
+        gameTiles = new ArrayList<>(gameSpec.boardSize());
+        for (int cellIndex = 0; cellIndex < gameSpec.boardSize(); cellIndex++) {
             final Label newGameTile = gameLabelFactory();
             gameTiles.add(newGameTile);
-            add(newGameTile, cellIndex % gameColumns, cellIndex / gameColumns);
+            add(newGameTile, cellIndex % gameSpec.Columns, cellIndex / gameSpec.Columns);
             System.out.println(newGameTile.toString() + GridPane.getColumnIndex(newGameTile) + GridPane.getRowIndex(newGameTile));
         }
 
         addEventFilter(GameCellInteractionEvent.ANY, e -> {
             System.out.println("Caught GameCellInteractionEvent");
+            if (gameOpeningCondition) processGameOpening(e);
             e.consume();
-            handleInteractionEvent(e);
+            thisInteractionManager.handle(e);
         });
         System.out.println("End of GameContainer");
     }
     // Default constructor for GameContainer
     GameContainer() {
-        this(GameDefaults.COLUMNS, GameDefaults.ROWS);
+        this (new GameSpecification());
     }
 
-    private void handleInteractionEvent(GameCellInteractionEvent e) {
-        final int activeCellIndex = (e.getLocation().y * totalColumns) + e.getLocation().x;
-        if (thisDataManager.isRevealed(activeCellIndex)) return;
-        if (e.getTrigger().getButton().equals(MouseButton.PRIMARY) && !thisDataManager.isFlagged(activeCellIndex))
-            gameTiles.get(activeCellIndex).setText(thisDataManager.revealEvent(activeCellIndex));
-        if (e.getTrigger().getButton().equals(MouseButton.SECONDARY))
-            gameTiles.get(activeCellIndex).setText(thisDataManager.flagEvent(activeCellIndex));
+    private void processGameOpening(GameCellInteractionEvent e) {
+        final int gameOpeningCell = thisGameSpec.getIndex(e.getLocation());
+        while (gameOpeningCondition) {
+            final int currentOpeningValue = thisDataManager.getAdjacentMines(gameOpeningCell);
+            if (currentOpeningValue != 0) {
+                thisDataManager = new GameDataManager(this, thisGameSpec);
+                thisInteractionManager = new GameInteractionManager(thisGameSpec, thisDataManager);
+            }
+            else gameOpeningCondition = false;
+        }
+
     }
     
+    public ArrayList<Label> getTiles() {
+        return gameTiles;
+    }
+
+    public void updateLabel(int cellIndex, String labelText) {
+        gameTiles.get(cellIndex).setText(labelText);
+    }
     // Factory method to produce a label with desired characteristics
     private static Label gameLabelFactory() {
         // Create new label object

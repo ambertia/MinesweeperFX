@@ -1,3 +1,5 @@
+package com.example;
+
 import java.awt.Point;
 
 import javafx.event.Event;

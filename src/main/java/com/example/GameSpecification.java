@@ -1,3 +1,5 @@
+package com.example;
+
 import java.awt.Point;
 /* Class to contain basic game specification information for convenience and organization */
 public class GameSpecification {

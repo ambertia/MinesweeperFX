@@ -1,3 +1,5 @@
+package com.example;
+
 import javafx.scene.input.MouseButton;
 
 public class GameInteractionManager {

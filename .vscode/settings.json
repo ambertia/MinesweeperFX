@@ -15,5 +15,6 @@
         "/usr/lib/jvm/java-20-openjdk/lib/javafx.swing.jar",
         "/usr/lib/jvm/java-20-openjdk/lib/javafx.web.jar",
         "/usr/lib/jvm/java-20-openjdk/lib/javafx-swt.jar"
-    ]
+    ],
+    "maven.view": "flat"
 }

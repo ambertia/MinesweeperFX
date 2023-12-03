@@ -40,7 +40,7 @@ public class GameContainer extends GridPane {
         });
         System.out.println("End of GameContainer");
     }
-    // Default constructor for GameContainer
+    // Constructor using default game settings
     GameContainer() {
         this (new GameSpecification());
     }

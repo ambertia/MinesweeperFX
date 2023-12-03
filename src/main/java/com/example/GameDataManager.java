@@ -3,6 +3,10 @@ package com.example;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+
 public class GameDataManager {
 
     // Instance properties
@@ -11,7 +15,7 @@ public class GameDataManager {
     private ArrayList<Integer> mineLocations;
     private GameCell[] cellData;
 
-    // Full featured constructor
+    // Constructor to make a new game board according to settings
     GameDataManager(GameContainer gameContainer, GameSpecification gameSpec) {
         System.out.println("Start of GameDataManager");
 
@@ -82,13 +86,14 @@ public class GameDataManager {
         return neighborMines;
     }
 
+    // Return number of revealed cells
     public int checkRevealedCells() {
         int revealedCells = 0;
         for (GameCell cell : cellData) if (cell.revealed) revealedCells++;
         return revealedCells;
     }
 
-    
+    // Boolean getters
     public boolean isMine(int cellIndex) {
         return mineLocations.contains(cellIndex);
     }
@@ -101,23 +106,61 @@ public class GameDataManager {
         return cellData[cellIndex].revealed;
     }
     
+    // GameCell getter
     public int getAdjacentMines(int cellIndex) {
         return cellData[cellIndex].nearbyMines;
     }
     
+    // Toggle flag on a cell
     public void flagEvent(int cellIndex) {
         System.out.println("Flag event " + cellIndex);
+        final Label thisTile = thisGameContainer.getTiles().get(cellIndex);
+        if (cellData[cellIndex].flagged) {
+            cellData[cellIndex].flagged = false;
+            thisTile.setText(" ");
+            thisTile.setGraphic(null);
+        } else {
+            cellData[cellIndex].flagged = true;
+            final ImageView thisIcon = new ImageView("flag.png");
+            
+            thisTile.setGraphic(thisIcon);
+            thisIcon.fitHeightProperty().bind(thisTile.heightProperty());
+            thisIcon.fitWidthProperty().bind(thisTile.widthProperty());
+            thisIcon.setScaleX(0.75);
+            thisIcon.setScaleY(0.75);
+            thisIcon.setTranslateX(-1);
+        }
         cellData[cellIndex].flagged = cellData[cellIndex].flagged ? false : true;
-        thisGameContainer.getTiles().get(cellIndex).setText(cellData[cellIndex].getLabel());
     }
 
+    // Reveal a cell
     public void revealEvent(int cellIndex) {
+        // Ignore call if the cell is flagged
         if (cellData[cellIndex].flagged) return;
         System.out.println("Revealed " + cellIndex);
+        // Set cell as revealed
         cellData[cellIndex].revealed = true;
-        thisGameContainer.getTiles().get(cellIndex).setText(cellData[cellIndex].getLabel());
-        thisGameContainer.getTiles().get(cellIndex).setId("revealed-cell");
-        if (cellData[cellIndex].nearbyMines == 0) revealNeighbors(cellIndex);
+
+        // Set cell label to appropriate value depending on cell state & set text color depending on number of mines
+        final Label thisTile = thisGameContainer.getTiles().get(cellIndex);
+        thisTile.setText(cellData[cellIndex].getLabel());
+        thisTile.setId("revealed-cell");
+        final int thisCellMines = cellData[cellIndex].nearbyMines;
+        thisTile.setTextFill(Color.web(GameDefaults.getColor(thisCellMines)));
+
+        if (cellData[cellIndex].hasMine) {
+            final ImageView thisIcon = new ImageView("mine.png");
+            
+            thisTile.setGraphic(thisIcon);
+            thisIcon.fitHeightProperty().bind(thisTile.heightProperty());
+            thisIcon.fitWidthProperty().bind(thisTile.widthProperty());
+            thisIcon.setScaleX(0.75);
+            thisIcon.setScaleY(0.75);
+            thisIcon.setTranslateX(-1);
+        }
+        
+        // If this cell has no mines around it, reveal neighbor cells - cascading reveal of large open areas
+        if (thisCellMines == 0) revealNeighbors(cellIndex);
     }
 
     public void revealNeighbors(int cellIndex) {
@@ -164,9 +207,9 @@ public class GameDataManager {
         }
 
         private String getLabel() {
-            if (flagged) return "F";
+            if (flagged) return " ";
             if (!revealed) return " ";
-            if (hasMine) return "*";
+            if (hasMine) return " ";
             if (nearbyMines == 0) return " ";
             return String.valueOf(nearbyMines);
         }

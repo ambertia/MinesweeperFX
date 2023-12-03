@@ -1,23 +1,20 @@
-MinesweeperFX Notes & Pseudocode
+MinesweeperFX Notes & Todos
 
-Basic functionality outline:
-- Starting menu to choose difficulty and initiate game
-- Game scene with grid of labels / buttons
-- Popup window or in-game notification for win/loss/new game
-
-Class structure
-MinesweeperGame: Application extension to manage game scenes and high-level functions
-GameContainer: Displayable object to manage active game UI elements, contain and reference
-a data manager
-GameDataManager: Manage the game state, process changes in game state and retreive cell
-information
-
-To-do list:
-- Implement function to reveal whole areas of the board with no neighbors: If nearbyMines
-  = 0, reveal all neighbors and/or add to waterfall pool?
-- New gamestate processor class? Would help split some functionality off of GameContainer & GameDataManager
+Todos:
 - Implement style changes incl. differentiating revealed tiles with no mines from
   unrevealed tiles (shadow/highlight?)
 - Implement menu bar functions
 - Implement extra game functions e.g. remaining mines to flag
-- Implement check on cell reveal for game state
+- Implement check on cell reveal for game state (i.e. win/lose)
+
+1. Finish game functionality
+  i. Use pop-up to announce win or loss in a game
+    - Win: Every non-mined cell must be revealed. Track remaining mines to be flagged; if it equals zero, check that all non-mine
+      cells have been revealed. If an incorrect cell has been flagged, the all non-mine cells reveal check will fail.
+    - Lose: If cell is revealed while having a mine, immediate loss. Lock inputs, pop-up to start new game or exit to menu (exit for now)
+  ii. Mine counter
+    - Keep track of total number of mines, and count down as flags are placed. If a flag is removed, count up. May have to wait for toolbar/
+      menu bar to be finished.
+  iii. Symbols / Aesthetic
+    ✔ Numbers should be colored according to number of nearby mines
+    - Symbols for flags & mines - Modest size PNG should be enough.

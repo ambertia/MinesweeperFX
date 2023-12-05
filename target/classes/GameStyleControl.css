@@ -13,6 +13,7 @@
     -fx-text-fill: #d11a1a;
     -fx-border-color: #353535;
 }
+
 #revealed-cell {
     -fx-background-color: #888888;
 }

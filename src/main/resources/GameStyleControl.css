@@ -14,6 +14,6 @@
     -fx-border-color: #353535;
 }
 
-#revealed-cell {
+.revealed-cell {
     -fx-background-color: #888888;
 }

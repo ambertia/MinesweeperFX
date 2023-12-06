@@ -7,6 +7,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
@@ -48,18 +49,43 @@ public class GameCell extends Label {
         this.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
         this.setPrefSize(CELL_SIZE, CELL_SIZE);
         this.setAlignment(Pos.CENTER);
+
+        // Set mouse click logic
+        this.setOnMouseClicked(e -> {
+
+            // If mouse has moved since press, do nothing
+            if (!e.isStillSincePress()) return;
+
+            // If already revealed, do nothing
+            if (revealed) return;
+
+            // Remaining paths for right and left clicks only
+            // If right click, toggle flagging
+            if (e.getButton().equals(MouseButton.SECONDARY)) {
+                flag = !flag;
+                update();
+            }
+
+            // More complicated left click logic
+            else if (e.getButton().equals(MouseButton.PRIMARY)) {
+                // If flagged & left clicked, do nothing
+                if (flag) {
+                    return;
+                }
+                // If not flagged and left clicked, reveal cell
+                else {
+                    revealed = true;
+                    update();
+                }
+            }
+        });
     }
     // Default to no mine, no nearby mines. Shouldn't need to be used.
     GameCell() {
         this(false, 0);
     }
 
-    // Interactivity on label
-    this.setOnMouseClicked( e -> {
-        
-    });
-
-    // Update label content
+    // Update label content to match gamestate
     public void update() {
         // If flagged set image to flag and display graphic
         if (flag) {

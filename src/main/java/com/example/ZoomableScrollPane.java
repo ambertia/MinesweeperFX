@@ -37,7 +37,7 @@ public class ZoomableScrollPane extends ScrollPane {
     private Node outerNode(Node node) {
         Node outerNode = centeredNode(node);
         outerNode.addEventFilter(ScrollEvent.ANY, e -> {
-            System.out.println("eventType: " + e.getEventType());
+            // System.out.println("eventType: " + e.getEventType());
             onScroll(e.getDeltaY(), new Point2D(e.getX(), e.getY()));
         });
         return outerNode;
@@ -55,10 +55,10 @@ public class ZoomableScrollPane extends ScrollPane {
     }
 
     private void onScroll(double wheelDelta, Point2D mousePoint) {
-        System.out.println("wheelDelta: " + wheelDelta);
-        System.out.println("mousePoint: " + mousePoint.toString());
+        // System.out.println("wheelDelta: " + wheelDelta);
+        // System.out.println("mousePoint: " + mousePoint.toString());
         double zoomFactor = Math.exp(wheelDelta * zoomIntensity);
-        System.out.println("zoomFactor: " + zoomFactor);
+        // System.out.println("zoomFactor: " + zoomFactor);
 
         Bounds innerBounds = zoomNode.getLayoutBounds();
         Bounds viewportBounds = getViewportBounds();
@@ -72,7 +72,7 @@ public class ZoomableScrollPane extends ScrollPane {
         scaleValue = Double.min(scaleValue, maxScaleValue);
         scaleValue = Double.max(scaleValue, minScaleValue);
 
-        System.out.println("scaleValue: " + scaleValue);
+        // System.out.println("scaleValue: " + scaleValue);
         updateScale();
         this.layout(); // refresh ScrollPane scroll positions & target bounds
 

@@ -4,7 +4,7 @@
 }
 
 .root {
-    -fx-background-color: #585858;
+    -fx-background-color: #505050;
 }
 .label {
     -fx-font-family: "Russo One";
@@ -13,6 +13,37 @@
     -fx-text-fill: #d11a1a;
     -fx-border-color: #353535;
 }
-#revealed-cell {
-    -fx-background-color: #888888;
+
+.revealed.label {
+    -fx-background-color: #707070;
+}
+.revealed.label .text {
+    -fx-stroke-width: 1px;
+}
+
+/* Couldn't figure out how to have different outline colors without this horribleness */
+
+.n1 .text {
+    -fx-stroke: #7f7fff;
+}
+.n2 .text {
+    -fx-stroke: #66cc66;
+}
+.n3 .text {
+    -fx-stroke: #ff7f7f;
+}
+.n4 .text {
+    -fx-stroke: #6666cc;
+}
+.n5 .text {
+    -fx-stroke: #b25959;
+}
+.n6 .text {
+    -fx-stroke: #59b2b2;
+}
+.n7 .text {
+    -fx-stroke: #b259b2;
+}
+.n8 .text {
+    -fx-stroke: #b2b2b2;
 }

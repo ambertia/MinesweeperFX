@@ -16,8 +16,8 @@ public class ZoomableScrollPane extends ScrollPane {
     private Node zoomNode;
 
     // Custom quantities
-    private double maxScaleValue = 5;
-    private double minScaleValue = 0.2;
+    private double maxScaleValue = 6;
+    private double minScaleValue = 0.4;
 
     public ZoomableScrollPane(Node target) {
         super();
@@ -39,6 +39,7 @@ public class ZoomableScrollPane extends ScrollPane {
         outerNode.addEventFilter(ScrollEvent.ANY, e -> {
             // System.out.println("eventType: " + e.getEventType());
             onScroll(e.getDeltaY(), new Point2D(e.getX(), e.getY()));
+            e.consume();
         });
         return outerNode;
     }
@@ -68,6 +69,9 @@ public class ZoomableScrollPane extends ScrollPane {
         double valY = this.getVvalue() * (innerBounds.getHeight() - viewportBounds.getHeight());
 
         // Modification to allow max & min scaleValues i.e. bounding user's ability to zoom in or out
+        if(scaleValue * zoomFactor > maxScaleValue) return;
+        if(scaleValue * zoomFactor < minScaleValue) return;
+
         scaleValue = scaleValue * zoomFactor;
         scaleValue = Double.min(scaleValue, maxScaleValue);
         scaleValue = Double.max(scaleValue, minScaleValue);

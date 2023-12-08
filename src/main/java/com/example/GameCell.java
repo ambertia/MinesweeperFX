@@ -32,57 +32,61 @@ public class GameCell extends Label {
         // ImageView configured and disabled for later
         // Label set with " " and colored according to schema
         icon = new ImageView();
-        this.setGraphic(icon);
-        icon.fitHeightProperty().bind(this.heightProperty());
-        icon.fitWidthProperty().bind(this.widthProperty());
+        setGraphic(icon);
+        icon.fitHeightProperty().bind(heightProperty());
+        icon.fitWidthProperty().bind(widthProperty());
         icon.setScaleX(0.75);
         icon.setScaleY(0.75);
-        icon.setTranslateX(-1);
 
-        this.setText(" ");
-        this.setTextFill(Color.web(GameDefaults.getColor(nearbyMines)));
-        this.setContentDisplay(ContentDisplay.TEXT_ONLY);
+        setText(" ");
+        setTextFill(Color.web(GameDefaults.getColor(nearbyMines)));
+        setContentDisplay(ContentDisplay.TEXT_ONLY);
+        setAlignment(Pos.CENTER);
 
         // Set cell GridPane constraints
         GridPane.setHalignment(this, HPos.CENTER);
         GridPane.setValignment(this, VPos.CENTER);
-        this.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
-        this.setPrefSize(CELL_SIZE, CELL_SIZE);
-        this.setAlignment(Pos.CENTER);
+        setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        setPrefSize(CELL_SIZE, CELL_SIZE);
+        setAlignment(Pos.CENTER);
 
         // Set mouse click logic
-        this.setOnMouseClicked(e -> {
+        setOnMouseClicked(e -> {
 
             // If mouse has moved since press, do nothing
-            if (!e.isStillSincePress()) return;
+            if (!e.isStillSincePress()) {
+                e.consume();
+                return;
+            }
 
-            // If already revealed, do nothing
-            if (revealed) return;
-
-            // Remaining paths for right and left clicks only
-            // If right click, toggle flagging
-            if (e.getButton().equals(MouseButton.SECONDARY)) {
+            // Special behavior for flag events
+            if (e.getButton().equals(MouseButton.SECONDARY) && !revealed) {
                 flag = !flag;
                 update();
             }
-
-            // More complicated left click logic
+            // Left click always calls reveal() - has check for flag therein
             else if (e.getButton().equals(MouseButton.PRIMARY)) {
-                // If flagged & left clicked, do nothing
-                if (flag) {
-                    return;
-                }
-                // If not flagged and left clicked, reveal cell
-                else {
-                    revealed = true;
-                    update();
-                }
+                reveal();
             }
+            // Event should be sent either way to be processed
+            fireEvent(new CellDataEvent(this, e));
         });
     }
-    // Default to no mine, no nearby mines. Shouldn't need to be used.
+    // Default to no mine & no nearby mines. Shouldn't need to be used.
     GameCell() {
         this(false, 0);
+    }
+
+    // Method to allow externally revealing cells
+    public void reveal() {
+        // Allows lazy call of reveal() function recursively while still protecting special cases
+        if(revealed) return;
+        if(flag) return;
+
+        getStyleClass().add("revealed");
+        getStyleClass().add(GameDefaults.getOutlineClass(nearby));
+        revealed = true;
+        update();
     }
 
     // Update label content to match gamestate
@@ -90,33 +94,45 @@ public class GameCell extends Label {
         // If flagged set image to flag and display graphic
         if (flag) {
             icon.setImage(new Image("flag.png"));
-            this.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             return;
         }
         // If simply hidden, set label to space and hide any graphics
         else if (!revealed) {
-            this.setText(" ");
-            this.setContentDisplay(ContentDisplay.TEXT_ONLY);
+            setText(" ");
+            setContentDisplay(ContentDisplay.TEXT_ONLY);
             return;
         }
         // If revealed and a mine, set image to mine and display graphic
         else if (mine) {
             icon.setImage(new Image("mine.png"));
-            this.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             return;
         }
         // If revealed and not a mine, show appropriate number label
         else {
             if (nearby == 0) {
-                this.setText(" ");
+                setText(" ");
             }
             else {
-                this.setText(Integer.valueOf(nearby).toString());
+                setText(Integer.valueOf(nearby).toString());
             }
-            this.setContentDisplay(ContentDisplay.TEXT_ONLY);
+            setContentDisplay(ContentDisplay.TEXT_ONLY);
         }
+    }
 
-
+    // Getter methods
+    public int getNearby() {
+        return nearby;
+    }
+    public boolean isFlagged() {
+        return flag;
+    }
+    public boolean isMine() {
+        return mine;
+    }
+    public boolean isRevealed() {
+        return revealed;
     }
 
 }

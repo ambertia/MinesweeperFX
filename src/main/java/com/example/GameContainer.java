@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 
 public class GameContainer extends GridPane {
     private ArrayList<GameCell> gameTiles;
@@ -45,15 +50,13 @@ public class GameContainer extends GridPane {
             else if (thisEvent.getButton().equals(MouseButton.PRIMARY)) {
                 // Intercept operation if this is the first cell of the game to be revealed
                 if (openingCondition) {
-                    while (gameTiles.get(thisIndex).getNearby() != 0) {
+                    while (gameTiles.get(thisIndex).getNearby() != 0 || gameTiles.get(thisIndex).isMine()) {
                         System.out.println(gameTiles.get(thisIndex).getNearby());
                         for (GameCell tile : gameTiles) {
                             getChildren().remove(tile);
                         }
-                        System.out.println("Generate board...");
                         gameTiles = boardFactory();
                     }
-                    System.out.println("openingcondition");
                     openingCondition = false;
                     thisCell = gameTiles.get(thisIndex);
                     thisCell.reveal();
@@ -142,4 +145,6 @@ public class GameContainer extends GridPane {
             if (neighborTile.getNearby() == 0) revealNeighbors(neighbor);
         }
     }
+
+    
 }

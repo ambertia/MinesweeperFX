@@ -6,9 +6,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class MinesweeperGame extends Application {
+    private GameContainer activeGame;
 
     public static void main(String[] args) {
         launch(args);
@@ -20,11 +24,10 @@ public class MinesweeperGame extends Application {
         Label minesLabel = new Label("mines");
         toolbar.getItems().add(testButton);
         toolbar.getItems().add(minesLabel);
-
-        GameContainer activeGame = new GameContainer(new GameSpecification());
+        
+        activeGame = new GameContainer(new GameSpecification());
         ZoomableScrollPane gameBoardWrapper = new ZoomableScrollPane(activeGame);
         gameBoardWrapper.getStyleClass().add("edge-to-edge");
-        // gameBoardWrapper.getStyleClass().add("root");
         BorderPane activeGameDisplay = new BorderPane();
         
         activeGameDisplay.setCenter(gameBoardWrapper);
@@ -32,10 +35,33 @@ public class MinesweeperGame extends Application {
         
         final Scene gameplayScene = new Scene(activeGameDisplay, 1280, 720);
         gameplayScene.getStylesheets().add("GameStyleControl.css");
-        // gameplayScene.setFill(Paint.valueOf("#505050"));
         primaryStage.setMaximized(true);
         primaryStage.setTitle("MinesweeperFX");
         primaryStage.setScene(gameplayScene);
         primaryStage.show();
+
+        
+    }
+
+    final private void startNewGame() {
+        activeGame = new GameContainer();
+    }
+
+    private class GameAlert extends Popup {
+
+        GameAlert() {
+            final Label alert = new Label("Game alert!");
+            final Button newGame = new Button("New game");
+            final Button quit = new Button("Quit");
+
+            final HBox buttonRow = new HBox(newGame, quit);
+            final VBox mainLayout = new VBox();
+            mainLayout.getChildren().addAll(alert, buttonRow);
+
+            newGame.setOnMouseClicked(e -> {
+                startNewGame();
+                hide();
+            });
+        }
     }
 }

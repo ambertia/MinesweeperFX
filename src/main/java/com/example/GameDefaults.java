@@ -12,7 +12,7 @@ public class GameDefaults {
     // Color getters based on nearby mine count
     // Invalid indices simply return a default color
 
-    public static String getOutlineClass(int nearbyMines) {
+    public static String getTextClass(int nearbyMines) {
         try {
             return outlineClasses[nearbyMines];
         } catch (IndexOutOfBoundsException e) {

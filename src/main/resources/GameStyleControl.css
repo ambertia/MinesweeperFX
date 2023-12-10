@@ -31,38 +31,55 @@
 }
 
 /* Couldn't figure out how to have different cell label colors without this horribleness */
-.n0 .text {
+/* TODO: This is dumb, and probably also won't play nice with custom user settings  */
+.n0 {
     -fx-text-fill: #000000;
+}
+.n1 {
+    -fx-text-fill: #0000ff;
 }
 .n1 .text {
     -fx-stroke: #7f7fff;
-    -fx-text-fill: #0000ff;
+}
+.n2 {
+    -fx-text-fill: #008400;
 }
 .n2 .text {
     -fx-stroke: #66cc66;
-    -fx-text-fill: #008400;
+}
+.n3 {
+    -fx-text-fill: #ff0000;
 }
 .n3 .text {
     -fx-stroke: #ff7f7f;
-    -fx-text-fill: #ff0000;
+}
+.n4 {
+    -fx-text-fill: #000084;
 }
 .n4 .text {
     -fx-stroke: #6666cc;
-    -fx-text-fill: #000084;
+}
+.n5 {
+    -fx-text-fill: #840000;
 }
 .n5 .text {
     -fx-stroke: #b25959;
-    -fx-text-fill: #840000;
+}
+.n6 {
+    -fx-text-fill: #008484;
 }
 .n6 .text {
     -fx-stroke: #59b2b2;
-    -fx-text-fill: #008484;
+}
+.n7 {
+    -fx-text-fill: #840084;
 }
 .n7 .text {
     -fx-stroke: #b259b2;
-    -fx-text-fill: #840084;
+}
+.n8 {
+    -fx-text-fill: #777777;
 }
 .n8 .text {
     -fx-stroke: #b2b2b2;
-    -fx-text-fill: #777777;
 }

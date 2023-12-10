@@ -42,7 +42,7 @@ public class GameCell extends Label {
         icon.setScaleY(0.75);
 
         setText(" ");
-        getStyleClass().add("n" + String.valueOf(nearbyMines));
+        getStyleClass().add(GameDefaults.getTextClass(nearby));
         setContentDisplay(ContentDisplay.TEXT_ONLY);
         setAlignment(Pos.CENTER);
 
@@ -87,7 +87,6 @@ public class GameCell extends Label {
         if(flag) return;
 
         getStyleClass().add("revealed");
-        getStyleClass().add(GameDefaults.getOutlineClass(nearby));
         revealed = true;
         update();
     }

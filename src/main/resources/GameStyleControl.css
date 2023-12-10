@@ -36,33 +36,33 @@
 }
 .n1 .text {
     -fx-stroke: #7f7fff;
-    -fx-font-fill: #0000ff;
+    -fx-text-fill: #0000ff;
 }
 .n2 .text {
     -fx-stroke: #66cc66;
-    -fx-font-fill: #008400;
+    -fx-text-fill: #008400;
 }
 .n3 .text {
     -fx-stroke: #ff7f7f;
-    -fx-font-fill: #ff0000;
+    -fx-text-fill: #ff0000;
 }
 .n4 .text {
     -fx-stroke: #6666cc;
-    -fx-font-fill: #
+    -fx-text-fill: #000084;
 }
 .n5 .text {
     -fx-stroke: #b25959;
-    -fx-font-fill: #
+    -fx-text-fill: #840000;
 }
 .n6 .text {
     -fx-stroke: #59b2b2;
-    -fx-font-fill: #
+    -fx-text-fill: #008484;
 }
 .n7 .text {
     -fx-stroke: #b259b2;
-    -fx-font-fill: #
+    -fx-text-fill: #840084;
 }
 .n8 .text {
     -fx-stroke: #b2b2b2;
-    -fx-font-fill: #
+    -fx-text-fill: #777777;
 }

@@ -42,7 +42,7 @@ public class GameCell extends Label {
         icon.setScaleY(0.75);
 
         setText(" ");
-        setTextFill(Color.web(GameDefaults.getColor(nearbyMines)));
+        getStyleClass().add("n" + String.valueOf(nearbyMines));
         setContentDisplay(ContentDisplay.TEXT_ONLY);
         setAlignment(Pos.CENTER);
 

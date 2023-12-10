@@ -4,46 +4,65 @@
 }
 
 .root {
-    -fx-background-color: #505050;
+    -fx-background: #505050;
+    -fx-padding: 0;
 }
-.label {
+
+/* .scrollpane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scrollpane {
+    -fx-background-color: #505050;
+} */
+
+.gamecell {
     -fx-font-family: "Russo One";
     -fx-font-size: 150%;
     -fx-background-color: #aaaaaa;
-    -fx-text-fill: #d11a1a;
     -fx-border-color: #353535;
 }
 
-.revealed.label {
+.revealed.gamecell {
     -fx-background-color: #707070;
 }
-.revealed.label .text {
+.revealed.gamecell .text {
     -fx-stroke-width: 1px;
 }
 
-/* Couldn't figure out how to have different outline colors without this horribleness */
-
+/* Couldn't figure out how to have different cell label colors without this horribleness */
+.n0 .text {
+    -fx-text-fill: #000000;
+}
 .n1 .text {
     -fx-stroke: #7f7fff;
+    -fx-font-fill: #0000ff;
 }
 .n2 .text {
     -fx-stroke: #66cc66;
+    -fx-font-fill: #008400;
 }
 .n3 .text {
     -fx-stroke: #ff7f7f;
+    -fx-font-fill: #ff0000;
 }
 .n4 .text {
     -fx-stroke: #6666cc;
+    -fx-font-fill: #
 }
 .n5 .text {
     -fx-stroke: #b25959;
+    -fx-font-fill: #
 }
 .n6 .text {
     -fx-stroke: #59b2b2;
+    -fx-font-fill: #
 }
 .n7 .text {
     -fx-stroke: #b259b2;
+    -fx-font-fill: #
 }
 .n8 .text {
     -fx-stroke: #b2b2b2;
+    -fx-font-fill: #
 }

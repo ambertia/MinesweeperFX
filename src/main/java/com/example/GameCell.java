@@ -28,6 +28,9 @@ public class GameCell extends Label {
         flag = false;
         nearby = nearbyMines;
 
+        // Add specific CSS metadata
+        getStyleClass().add("gamecell");
+
         // Configure label content
         // ImageView configured and disabled for later
         // Label set with " " and colored according to schema

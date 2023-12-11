@@ -1,18 +1,17 @@
-## Getting Started
+## MinesweeperFX
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Personal project with the goal of creating a functional implementation of the game Minesweeper in a portable JAR using OpenJFX.
 
 ## Folder Structure
 
-The workspace contains two folders by default, where:
+- `assets`: Auxiliary storage of assets e.g. vector icons
+- `docs`: Documentation (needs to be updated) - To-do list, drawio charts / PDFs.
+- `src`: Source files and asset files used at runtime 
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Dependencies
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+This project was built using OpenJDK 17 and OpenJFX 17, and as such will require a JRE of comparable version to run.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Installation
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+I plan to release portable JARs in the future. Beyond that, the software can be built by downloading the repository and running `mvn install` in the root of the repository, which will generated a shaded JAR in `target`.

@@ -8,8 +8,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class GameCell extends Label {
     // Contain cell state information and graphics information to interplay with each other
@@ -53,6 +55,17 @@ public class GameCell extends Label {
         setPrefSize(CELL_SIZE, CELL_SIZE);
         setAlignment(Pos.CENTER);
 
+        addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (!e.isStillSincePress()) {
+                e.consume();
+                return;
+            }
+            if (e.getTarget() instanceof Text) {
+                e.consume();
+                fireEvent(e);
+            }
+        });
+
         // Set mouse click logic
         setOnMouseClicked(e -> {
 
@@ -71,8 +84,6 @@ public class GameCell extends Label {
             else if (e.getButton().equals(MouseButton.PRIMARY)) {
                 reveal();
             }
-            // Event should be sent either way to be processed
-            fireEvent(new CellDataEvent(this, e));
         });
     }
     // Default to no mine & no nearby mines. Shouldn't need to be used.

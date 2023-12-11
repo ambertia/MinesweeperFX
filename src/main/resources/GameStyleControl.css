@@ -24,7 +24,7 @@
 }
 
 .revealed.gamecell {
-    -fx-background-color: #707070;
+    -fx-background-color: #808080;
 }
 .revealed.gamecell .text {
     -fx-stroke-width: 1px;

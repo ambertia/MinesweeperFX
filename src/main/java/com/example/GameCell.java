@@ -21,7 +21,7 @@ public class GameCell extends Label {
     private int nearby;
     private ImageView icon;
 
-    private static double CELL_SIZE = 25;
+    public static double CELL_SIZE = 25;
 
     GameCell(boolean hasMine, int nearbyMines) {
         // Fill out fields

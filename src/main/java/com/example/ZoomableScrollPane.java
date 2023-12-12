@@ -3,10 +3,12 @@ package com.example;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class ZoomableScrollPane extends ScrollPane {
@@ -56,10 +58,7 @@ public class ZoomableScrollPane extends ScrollPane {
     }
 
     private void onScroll(double wheelDelta, Point2D mousePoint) {
-        // System.out.println("wheelDelta: " + wheelDelta);
-        // System.out.println("mousePoint: " + mousePoint.toString());
         double zoomFactor = Math.exp(wheelDelta * zoomIntensity);
-        // System.out.println("zoomFactor: " + zoomFactor);
 
         Bounds innerBounds = zoomNode.getLayoutBounds();
         Bounds viewportBounds = getViewportBounds();
@@ -76,7 +75,6 @@ public class ZoomableScrollPane extends ScrollPane {
         scaleValue = Double.min(scaleValue, maxScaleValue);
         scaleValue = Double.max(scaleValue, minScaleValue);
 
-        // System.out.println("scaleValue: " + scaleValue);
         updateScale();
         this.layout(); // refresh ScrollPane scroll positions & target bounds
 
@@ -91,5 +89,14 @@ public class ZoomableScrollPane extends ScrollPane {
         Bounds updatedInnerBounds = zoomNode.getBoundsInLocal();
         this.setHvalue((valX + adjustment.getX()) / (updatedInnerBounds.getWidth() - viewportBounds.getWidth()));
         this.setVvalue((valY + adjustment.getY()) / (updatedInnerBounds.getHeight() - viewportBounds.getHeight()));
+    }
+
+    public void scaleToFit(Region area, Rectangle2D contentSize) {
+        final double scaleFitX = area.getWidth() / contentSize.getWidth();
+        final double scaleFitY = area.getHeight() / contentSize.getHeight();
+        scaleValue = Math.min(scaleFitX, scaleFitY);
+        updateScale();
+        setHvalue(getHmax() / 2);
+        setVvalue(getVmax() / 2);
     }
 }

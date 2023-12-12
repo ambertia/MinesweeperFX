@@ -4,6 +4,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+
+import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +15,8 @@ import javafx.scene.layout.GridPane;
 public class GameContainer extends GridPane {
     private ArrayList<GameCell> gameTiles;
     private final GameSpecification thisGameSpec;
+
+    public static double BOARD_PADDING_CELLS = 4;
 
     private int remainingMines;
     private boolean openingCondition;
@@ -22,29 +27,24 @@ public class GameContainer extends GridPane {
         gameTiles = cellListFactory();
         openingCondition = true;
 
-        remainingMines = gameSpec.gameMines;
+        remainingMines = thisGameSpec.gameMines;
 
-        setPadding(new Insets(100.));
+        setPadding(new Insets(BOARD_PADDING_CELLS * GameCell.CELL_SIZE));
         setContent(gameTiles);
 
         // Game events should be captured here to be processed
         addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (!e.isStillSincePress()) return;
 
-            System.out.println(e.getTarget().toString());
             final int thisIndex = gameTiles.indexOf(e.getTarget());
-            System.out.println(thisIndex);
             GameCell thisCell = gameTiles.get(thisIndex);
             // Right clicks will be for either group revealing or tracking flags
             if (e.getButton().equals(MouseButton.SECONDARY)) {
+                if (openingCondition) e.consume();
                 // If not revealed, conduct flag toggling
-                if (!thisCell.isRevealed()) {
-                    remainingMines += (thisCell.isFlagged()) ? -1 : 1;
-                }
+                else if (!thisCell.isRevealed()) remainingMines += thisCell.isFlagged() ? -1 : 1;
                 // If revealed, reveal surrounding cells
-                else {
-                    revealNeighbors(thisIndex);
-                }
+                else revealNeighbors(thisIndex);
             }
             else if (e.getButton().equals(MouseButton.PRIMARY)) {
                 // Intercept operation if this is the first cell of the game to be revealed
@@ -61,6 +61,7 @@ public class GameContainer extends GridPane {
                     gameTiles = cellListFactory(mineLocations);
                     setContent(gameTiles);
 
+                    remainingMines = thisGameSpec.gameMines;
                     openingCondition = false;
                     thisCell = gameTiles.get(thisIndex);
                     thisCell.reveal();
@@ -69,12 +70,13 @@ public class GameContainer extends GridPane {
                     if (thisCell.getNearby() == 0) revealNeighbors(thisIndex);
                 }
             }
+
         });
         
     }
     // Build a game with default specifications
     GameContainer() {
-        this(new GameSpecification());
+        this(GameDefaults.EASY);
     }
 
     // Generate an appropriately sized list of yes/no values representing the presence or absence of mines in the game tiles
@@ -160,6 +162,30 @@ public class GameContainer extends GridPane {
         return thisCellNeighbors;
     }
 
+    public GameCell getCell(EventTarget target) {
+        if (!gameTiles.contains(target)) return null;
+        else {
+            int index = gameTiles.indexOf(target);
+            return gameTiles.get(index);
+        }
+    }
+
+    public GameSpecification getGameSpec() {
+        return thisGameSpec;
+    }
+
+    public int tallyRevealed() {
+        int revealed = 0;
+        for (GameCell cell : gameTiles) {
+            if (cell.isRevealed()) revealed++;
+        }
+        return revealed;
+    }
+
+    public int remainingMines() {
+        return remainingMines;
+    }
+
     private void revealNeighbors(int index) {
         for (int neighbor : getNeighbors(index)) {
             final GameCell neighborTile = gameTiles.get(neighbor);
@@ -168,6 +194,4 @@ public class GameContainer extends GridPane {
             if (neighborTile.getNearby() == 0) revealNeighbors(neighbor);
         }
     }
-
-    
 }

@@ -2,9 +2,13 @@ package com.example;
 
 public class GameDefaults {
     // Default game settings
-    public static final int COLUMNS = 30;
-    public static final int ROWS = 20;
+    public static final int COLUMNS = 20;
+    public static final int ROWS = 10;
     public static final double MINE_FRACTION = 0.15;
+
+    public static final GameSpecification EASY = new GameSpecification(20, 10, 0.15);
+    public static final GameSpecification MEDIUM = new GameSpecification(25, 15, 0.175);
+    public static final GameSpecification HARD = new GameSpecification(30, 20, 0.2);
 
     // String[] must be private to prevent modification of string objects inside
     private static final String[] outlineClasses = {"n1", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8"};

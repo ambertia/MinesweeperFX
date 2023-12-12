@@ -39,6 +39,7 @@ public class MinesweeperGame extends Application {
         Button newGame = new Button();
         newGame.setText("New Game");
         minesLabel = new Label();
+        minesLabel.getStyleClass().add("mineLabel");
         MenuButton difficultySelector = new MenuButton("Difficulty");
 
         MenuItem easy = new MenuItem("Easy");

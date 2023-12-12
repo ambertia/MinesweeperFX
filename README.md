@@ -8,7 +8,7 @@ Personal project with the goal of creating a functional implementation of the ga
 - `docs`: Documentation (needs to be updated) - To-do list, drawio charts / PDFs.
 - `src`: Source files and asset files used at runtime 
 
-## Dependencies
+## Requirements
 
 This project was built using OpenJDK 17 and OpenJFX 17, and as such will require a JRE of comparable version to run.
 

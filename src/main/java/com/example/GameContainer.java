@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseButton;
@@ -79,6 +78,10 @@ public class GameContainer extends GridPane {
         this(GameDefaults.EASY);
     }
 
+    public boolean checkRevealedMines(GameCell cell) {
+        for (Integer index : getNeighbors(gameTiles.indexOf(cell))) if (gameTiles.get(index).isRevealed() && gameTiles.get(index).isMine()) return true;
+        return false;
+    }
     // Generate an appropriately sized list of yes/no values representing the presence or absence of mines in the game tiles
     private boolean[] minefieldFactory() {
         // Initialize variables for mine locations and random generation

@@ -7,6 +7,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -22,7 +25,7 @@ public class MinesweeperGame extends Application {
     private ToolBar toolbar;
     private GameContainer activeGame;
     private ZoomableScrollPane gameBoardWrapper;
-    private GameSpecification gameSpec;
+    private GameSpecification difficulty;
     private StackPane gameAreaStack;
     private Stage window;
 
@@ -31,11 +34,32 @@ public class MinesweeperGame extends Application {
     }
 
     public void start(Stage primaryStage) {
+        difficulty = GameDefaults.EASY;
         toolbar = new ToolBar();
-        Button newGame = new Button("New");
+        Button newGame = new Button();
+        newGame.setText("New Game");
         minesLabel = new Label();
-        toolbar.getItems().add(newGame);
-        toolbar.getItems().add(minesLabel);
+        MenuButton difficultySelector = new MenuButton("Difficulty");
+
+        MenuItem easy = new MenuItem("Easy");
+        easy.setOnAction(e -> {
+            difficulty = GameDefaults.EASY;
+            difficultySelector.setText("Easy");
+        });
+        MenuItem medium = new MenuItem("Medium");
+        medium.setOnAction(e -> {
+            difficulty = GameDefaults.MEDIUM;
+            difficultySelector.setText("Medium");
+        });
+        MenuItem hard = new MenuItem("Hard");
+        hard.setOnAction(e -> {
+            difficulty = GameDefaults.HARD;
+            difficultySelector.setText("Hard");
+        });
+
+        difficultySelector.getItems().addAll(easy, medium, hard);
+
+        toolbar.getItems().addAll(newGame, minesLabel, difficultySelector);
 
         newGame.setOnMouseClicked(e -> {
             if (!e.isStillSincePress()) return;
@@ -44,7 +68,6 @@ public class MinesweeperGame extends Application {
         });
         
         gameAreaStack = new StackPane();
-        gameSpec = new GameSpecification();
         BorderPane activeGameDisplay = new BorderPane();
         
         activeGameDisplay.setCenter(gameAreaStack);
@@ -66,19 +89,24 @@ public class MinesweeperGame extends Application {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (thisCell.isMine()) {
                     thisCell.setStyle("-fx-border-color: #ff0000;");
-                    gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (gameSpec.Columns + 2) * GameCell.CELL_SIZE, (gameSpec.Rows + 2) * GameCell.CELL_SIZE));
-                    gameAreaStack.getChildren().add(gameAlert("You lose!"));
+                    triggerLoss();
                     return;
                 }
             }
             else if (e.getButton().equals(MouseButton.SECONDARY)) {
-                
+                if (thisCell.isRevealed()) {
+                    if (activeGame.checkRevealedMines(thisCell)) {
+                        thisCell.setStyle("-fx-border-color: #ff0000;");
+                        triggerLoss();
+                        return;
+                    }
+                }
             }
             else return;
             if (activeGame.remainingMines() == 0) {
                 final int revealedCells = activeGame.tallyRevealed();
-                if (revealedCells == gameSpec.boardSize - gameSpec.gameMines) {
-                    gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (gameSpec.Columns + 2) * GameCell.CELL_SIZE, (gameSpec.Rows + 2) * GameCell.CELL_SIZE));
+                if (revealedCells == activeGame.getGameSpec().boardSize - activeGame.getGameSpec().gameMines) {
+                    gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
                     gameAreaStack.getChildren().add(gameAlert("You win!"));
                 }
             }
@@ -89,11 +117,11 @@ public class MinesweeperGame extends Application {
 
     final private void startNewGame() {
         gameAreaStack.getChildren().removeAll(gameAreaStack.getChildren());
-        activeGame = new GameContainer();
+        activeGame = new GameContainer(difficulty);
         gameBoardWrapper = new ZoomableScrollPane(activeGame);
         gameBoardWrapper.getStyleClass().add("edge-to-edge");
         gameAreaStack.getChildren().add(gameBoardWrapper);
-        gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (gameSpec.Columns + 2) * GameCell.CELL_SIZE, (gameSpec.Rows + 2) * GameCell.CELL_SIZE));
+        gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
         updateMineLabel();
     }
 
@@ -126,5 +154,9 @@ public class MinesweeperGame extends Application {
     }
     final private VBox gameAlert() {
         return gameAlert("Game alert!");
+    }
+    protected void triggerLoss() {
+        gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
+        gameAreaStack.getChildren().add(gameAlert("You lose!"));
     }
 }

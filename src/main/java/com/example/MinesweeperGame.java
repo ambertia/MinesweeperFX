@@ -1,6 +1,7 @@
 package com.example;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -21,27 +22,42 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class MinesweeperGame extends Application {
+    // Toolbar elements that must be referenced in different methods
     private Label minesLabel;
     private ToolBar toolbar;
+
+    // Region nodes that must be referenced in different methods
     private GameContainer activeGame;
     private ZoomableScrollPane gameBoardWrapper;
-    private GameSpecification difficulty;
     private StackPane gameAreaStack;
-    private Stage window;
+    private Scene gameplayScene;
+    private Scene menuScene;
+    private Stage gameWindow;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    // Metainformation
+    private GameSpecification difficulty;
+    
+    // Application constructor to assign UI elements & complete fields
+    public MinesweeperGame() {
+        /*
+         * Build Toolbar
+         */
 
-    public void start(Stage primaryStage) {
-        difficulty = GameDefaults.EASY;
-        toolbar = new ToolBar();
-        Button newGame = new Button();
-        newGame.setText("New Game");
+        // Label to display the number of mines the player has yet to flag
         minesLabel = new Label();
         minesLabel.getStyleClass().add("mineLabel");
-        MenuButton difficultySelector = new MenuButton("Difficulty");
 
+        // Button to allow the user to start a new game
+        Button newGame = new Button();
+        newGame.setText("New Game");
+        newGame.setOnMouseClicked(e -> {
+            if (!e.isStillSincePress()) return;
+            if (!(e.getButton().equals(MouseButton.PRIMARY))) return;
+            startNewGame();
+        });
+
+        // Drop-down menu to select difficulty
+        MenuButton difficultySelector = new MenuButton("Difficulty");
         MenuItem easy = new MenuItem("Easy");
         easy.setOnAction(e -> {
             difficulty = GameDefaults.EASY;
@@ -57,31 +73,57 @@ public class MinesweeperGame extends Application {
             difficulty = GameDefaults.HARD;
             difficultySelector.setText("Hard");
         });
-
         difficultySelector.getItems().addAll(easy, medium, hard);
 
-        toolbar.getItems().addAll(newGame, minesLabel, difficultySelector);
+        // Add elements to toolbar
+        toolbar = new ToolBar(newGame, difficultySelector, minesLabel);
 
-        newGame.setOnMouseClicked(e -> {
-            if (!e.isStillSincePress()) return;
-            if (!(e.getButton().equals(MouseButton.PRIMARY))) return;
+        /*
+         * Fetch Display Information
+         */
+        final Rectangle2D displayBounds = Screen.getPrimary().getBounds();
+
+        /*
+         * Build Gameplay Scene
+         */
+        gameAreaStack = new StackPane();
+        final BorderPane activeGameDisplay = new BorderPane();
+        activeGameDisplay.setTop(toolbar);
+        activeGameDisplay.setCenter(gameAreaStack);
+        gameplayScene = new Scene(activeGameDisplay, displayBounds.getWidth(), displayBounds.getHeight());
+        gameplayScene.getStylesheets().add("GameStyleControl.css");
+
+        /*
+         * Build Menu Scene
+         */
+        final Button newGameMenu = new Button("New Game");
+        newGameMenu.setOnAction(e -> {
+            gameWindow.setScene(gameplayScene);
             startNewGame();
         });
-        
-        gameAreaStack = new StackPane();
-        BorderPane activeGameDisplay = new BorderPane();
-        
-        activeGameDisplay.setCenter(gameAreaStack);
-        activeGameDisplay.setTop(toolbar);
-        
-        final Rectangle2D displayBounds = Screen.getPrimary().getBounds();
-        final Scene gameplayScene = new Scene(activeGameDisplay, displayBounds.getWidth(), displayBounds.getHeight());
-        gameplayScene.getStylesheets().add("GameStyleControl.css");
-        window = primaryStage;
+        final Button quit = new Button("Quit");
+        quit.setOnAction(e -> {
+            Platform.exit();
+        });
+        final Label titleLabel = new Label("Minesweeper");
+        final HBox buttonRow = new HBox(newGameMenu, quit);
+        final VBox menuLayout = new VBox(titleLabel, buttonRow);
+        menuScene = new Scene(menuLayout, displayBounds.getWidth(), displayBounds.getHeight());
+        menuScene.getStylesheets().add("GameStyleControl.css");
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    public void start(Stage primaryStage) {
+    
+        // Configure primary window
+        gameWindow = primaryStage;
         primaryStage.setMaximized(true);
         primaryStage.setTitle("MinesweeperFX");
-        primaryStage.setScene(gameplayScene);
+        primaryStage.setScene(menuScene);
         primaryStage.show();
+        difficulty = GameDefaults.EASY;
         startNewGame();
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -97,7 +139,6 @@ public class MinesweeperGame extends Application {
             else if (e.getButton().equals(MouseButton.SECONDARY)) {
                 if (thisCell.isRevealed()) {
                     if (activeGame.checkRevealedMines(thisCell)) {
-                        thisCell.setStyle("-fx-border-color: #ff0000;");
                         triggerLoss();
                         return;
                     }
@@ -148,7 +189,7 @@ public class MinesweeperGame extends Application {
         });
 
         quit.setOnMouseClicked(e -> {
-            window.close();
+            Platform.exit();
         });
 
         return mainLayout;

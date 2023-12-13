@@ -1,20 +1,36 @@
 MinesweeperFX Notes & Todos
 
 Todos:
-- Implement style changes incl. differentiating revealed tiles with no mines from
+✔ Implement style changes incl. differentiating revealed tiles with no mines from
   unrevealed tiles (shadow/highlight?)
-- Implement menu bar functions
-- Implement extra game functions e.g. remaining mines to flag
-- Implement check on cell reveal for game state (i.e. win/lose)
+✔ Implement menu bar functions
+✔ Implement extra game functions e.g. remaining mines to flag
+✔ Implement check on cell reveal for game state (i.e. win/lose)
 
 1. Finish game functionality
   i. Use pop-up to announce win or loss in a game
-    - Win: Every non-mined cell must be revealed. Track remaining mines to be flagged; if it equals zero, check that all non-mine
+    ✔ Win: Every non-mined cell must be revealed. Track remaining mines to be flagged; if it equals zero, check that all non-mine
       cells have been revealed. If an incorrect cell has been flagged, the all non-mine cells reveal check will fail.
-    - Lose: If cell is revealed while having a mine, immediate loss. Lock inputs, pop-up to start new game or exit to menu (exit for now)
+    ✔ Lose: If cell is revealed while having a mine, immediate loss. Lock inputs, pop-up to start new game or exit to menu (exit for now)
   ii. Mine counter
-    - Keep track of total number of mines, and count down as flags are placed. If a flag is removed, count up. May have to wait for toolbar/
+    ✔ Keep track of total number of mines, and count down as flags are placed. If a flag is removed, count up. May have to wait for toolbar/
       menu bar to be finished.
   iii. Symbols / Aesthetic
     ✔ Numbers should be colored according to number of nearby mines
-    - Symbols for flags & mines - Modest size PNG should be enough.
+    ✔ Symbols for flags & mines - Modest size PNG should be enough.
+
+2. UI cleanup & reorg
+  i. Add a main menu (likely separate scene)
+    - Start Game button
+    - Custom difficulty boxes
+    - Big title thing
+    - Animated background?
+  ii. Tool bar upgrade
+    - Put mine label on right-hand side
+    - Menus for settings when applicable
+    - Save & quit button
+  iii. Local file I/O
+    - How will this work on portable JARs?? File input inside/outside JAR, or on user's system?
+    - Save unfinished games to file on close & load on load
+    - Save user settings i.e. custom difficulty presets, UI coloration settings
+  iv. (probably better to do earlier) Clean up classes, esp MinesweeperGame and order of functions in GameContainer and GameCell

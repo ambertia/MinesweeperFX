@@ -120,6 +120,7 @@ public class GameCell extends Label {
         else if (mine) {
             icon.setImage(new Image("mine.png"));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setStyle("-fx-border-color: #ff0000;");
             return;
         }
         // If revealed and not a mine, show appropriate number label

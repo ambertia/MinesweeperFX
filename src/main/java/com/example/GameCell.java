@@ -82,6 +82,7 @@ public class GameCell extends Label {
             }
             // Left click always calls reveal() - has check for flag therein
             else if (e.getButton().equals(MouseButton.PRIMARY)) {
+                if (flag) e.consume();
                 reveal();
             }
         });

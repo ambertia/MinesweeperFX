@@ -5,17 +5,22 @@ import javafx.application.Platform;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -56,6 +61,16 @@ public class MinesweeperGame extends Application {
             startNewGame();
         });
 
+        // TODO Custom Difficulty Selector - maybe use Spinners?
+        Spinner<Integer> columns = new Spinner<Integer>(1, 100, difficulty.Columns);
+        columns.setPromptText("Columns");
+        Spinner<Integer> rows = new Spinner<Integer>(1, 100, difficulty.Columns);
+        rows.setPromptText("Rows");
+        Spinner<Double> mines = new Spinner<Double>(0., 1., difficulty.MineFraction, 0.01);
+        mines.setPromptText("Mines");
+        HBox customDifficultyWrapper = new HBox(columns, rows, mines);
+        customDifficultyWrapper.setVisible(false);
+        
         // Drop-down menu to select difficulty
         MenuButton difficultySelector = new MenuButton("Difficulty");
         MenuItem easy = new MenuItem("Easy");
@@ -73,10 +88,17 @@ public class MinesweeperGame extends Application {
             difficulty = GameDefaults.HARD;
             difficultySelector.setText("Hard");
         });
-        difficultySelector.getItems().addAll(easy, medium, hard);
+        MenuItem custom = new MenuItem("Custom");
+        custom.setOnAction(e -> {
+            customDifficultyWrapper.setVisible(true);
+            columns.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, difficulty.Columns));
+            rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, difficulty.Rows));
+            mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., difficulty.MineFraction, 0.01));
+        });
+        difficultySelector.getItems().addAll(easy, medium, hard, custom);
 
         // Add elements to toolbar
-        toolbar = new ToolBar(newGame, difficultySelector, minesLabel);
+        toolbar = new ToolBar(minesLabel, newGame, difficultySelector, customDifficultyWrapper);
 
         /*
          * Fetch Display Information
@@ -124,7 +146,6 @@ public class MinesweeperGame extends Application {
         primaryStage.setScene(menuScene);
         primaryStage.show();
         difficulty = GameDefaults.EASY;
-        startNewGame();
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             final GameCell thisCell = activeGame.getCell(e.getTarget());
@@ -132,14 +153,14 @@ public class MinesweeperGame extends Application {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (thisCell.isMine()) {
                     thisCell.setStyle("-fx-border-color: #ff0000;");
-                    triggerLoss();
+                    gameAreaStack.getChildren().add(gameAlert("You lose!"));
                     return;
                 }
             }
             else if (e.getButton().equals(MouseButton.SECONDARY)) {
                 if (thisCell.isRevealed()) {
                     if (activeGame.checkRevealedMines(thisCell)) {
-                        triggerLoss();
+                        gameAreaStack.getChildren().add(gameAlert("You lose!"));
                         return;
                     }
                 }
@@ -193,12 +214,5 @@ public class MinesweeperGame extends Application {
         });
 
         return mainLayout;
-    }
-    final private VBox gameAlert() {
-        return gameAlert("Game alert!");
-    }
-    protected void triggerLoss() {
-        gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
-        gameAreaStack.getChildren().add(gameAlert("You lose!"));
     }
 }

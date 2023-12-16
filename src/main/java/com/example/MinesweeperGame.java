@@ -2,10 +2,8 @@ package com.example;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,14 +11,11 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -52,50 +47,71 @@ public class MinesweeperGame extends Application {
         minesLabel = new Label();
         minesLabel.getStyleClass().add("mineLabel");
 
-        // Button to allow the user to start a new game
-        Button newGame = new Button();
-        newGame.setText("New Game");
-        newGame.setOnMouseClicked(e -> {
-            if (!e.isStillSincePress()) return;
-            if (!(e.getButton().equals(MouseButton.PRIMARY))) return;
-            startNewGame();
-        });
-
-        // TODO Custom Difficulty Selector - maybe use Spinners?
-        Spinner<Integer> columns = new Spinner<Integer>(1, 100, difficulty.Columns);
+        // Custom difficulty selector using spinners
+        Spinner<Integer> columns = new Spinner<Integer>(1, 100, 30);
         columns.setPromptText("Columns");
-        Spinner<Integer> rows = new Spinner<Integer>(1, 100, difficulty.Columns);
+        columns.setEditable(true);
+        Spinner<Integer> rows = new Spinner<Integer>(1, 100, 20);
         rows.setPromptText("Rows");
-        Spinner<Double> mines = new Spinner<Double>(0., 1., difficulty.MineFraction, 0.01);
+        rows.setEditable(true);
+        Spinner<Double> mines = new Spinner<Double>(0., 1., 0.17);
         mines.setPromptText("Mines");
+        mines.setEditable(true);
         HBox customDifficultyWrapper = new HBox(columns, rows, mines);
         customDifficultyWrapper.setVisible(false);
         
         // Drop-down menu to select difficulty
-        MenuButton difficultySelector = new MenuButton("Difficulty");
+        MenuButton difficultySelector = new MenuButton("Medium");
+        // Manipulating the spinner values is a straightforward way to encode the difficulty,
+        // so that the New Game button can simply look at the spinner each time and check the values.
+        // Also still allows default values to be read from GameDefaults
         MenuItem easy = new MenuItem("Easy");
         easy.setOnAction(e -> {
-            difficulty = GameDefaults.EASY;
             difficultySelector.setText("Easy");
+            customDifficultyWrapper.setVisible(false);
+            columns.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.EASY.Columns));
+            rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.EASY.Rows));
+            mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.EASY.MineFraction, 0.01));
         });
         MenuItem medium = new MenuItem("Medium");
         medium.setOnAction(e -> {
-            difficulty = GameDefaults.MEDIUM;
             difficultySelector.setText("Medium");
+            customDifficultyWrapper.setVisible(false);
+            columns.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.MEDIUM.Columns));
+            rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.MEDIUM.Rows));
+            mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.MEDIUM.MineFraction, 0.01));
         });
         MenuItem hard = new MenuItem("Hard");
         hard.setOnAction(e -> {
-            difficulty = GameDefaults.HARD;
             difficultySelector.setText("Hard");
+            customDifficultyWrapper.setVisible(false);
+            columns.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.HARD.Columns));
+            rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.HARD.Rows));
+            mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.HARD.MineFraction, 0.01));
         });
         MenuItem custom = new MenuItem("Custom");
         custom.setOnAction(e -> {
+            difficultySelector.setText("Custom");
             customDifficultyWrapper.setVisible(true);
             columns.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, difficulty.Columns));
             rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, difficulty.Rows));
             mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., difficulty.MineFraction, 0.01));
         });
         difficultySelector.getItems().addAll(easy, medium, hard, custom);
+
+        // Button to allow the user to start a new game
+        Button newGame = new Button();
+        newGame.setText("New Game");
+        newGame.setOnMouseClicked(e -> {
+            if (!e.isStillSincePress()) return;
+            if (!(e.getButton().equals(MouseButton.PRIMARY))) return;
+            try {
+                difficulty = new GameSpecification(columns.getValue(), rows.getValue(), mines.getValue());
+            } catch (NumberFormatException error) {
+                System.out.println(error);
+            }
+            startNewGame();
+        });
 
         // Add elements to toolbar
         toolbar = new ToolBar(minesLabel, newGame, difficultySelector, customDifficultyWrapper);
@@ -145,7 +161,7 @@ public class MinesweeperGame extends Application {
         primaryStage.setTitle("MinesweeperFX");
         primaryStage.setScene(menuScene);
         primaryStage.show();
-        difficulty = GameDefaults.EASY;
+        difficulty = GameDefaults.MEDIUM;
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             final GameCell thisCell = activeGame.getCell(e.getTarget());
@@ -185,13 +201,10 @@ public class MinesweeperGame extends Application {
         gameBoardWrapper.getStyleClass().add("edge-to-edge");
         gameAreaStack.getChildren().add(gameBoardWrapper);
         gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
-        updateMineLabel();
-    }
-
-    final protected void updateMineLabel() {
         minesLabel.setText(String.valueOf(activeGame.remainingMines()));
     }
 
+    // Construct a game popup such as the ones when you win or lose the game
     final private VBox gameAlert(String message) {
 
         final Label alert = new Label(message);

@@ -17,7 +17,7 @@ public class GameSpecification {
         gameMines = Double.valueOf(Columns * Rows * MineFraction).intValue();
     }
     GameSpecification() {
-        this(GameDefaults.COLUMNS, GameDefaults.ROWS, GameDefaults.MINE_FRACTION);
+        this(GameDefaults.MEDIUM.Columns, GameDefaults.MEDIUM.Rows, GameDefaults.MEDIUM.MineFraction);
     }
 
     // Convenience method to change an x,y point into a linear cell index given the number of columns

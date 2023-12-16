@@ -36,14 +36,20 @@ public class GameContainer extends GridPane {
             if (!e.isStillSincePress()) return;
 
             final int thisIndex = gameTiles.indexOf(e.getTarget());
+            if (thisIndex == -1) {
+                e.consume();
+                return;
+            }
             GameCell thisCell = gameTiles.get(thisIndex);
             // Right clicks will be for either group revealing or tracking flags
             if (e.getButton().equals(MouseButton.SECONDARY)) {
                 if (openingCondition) e.consume();
                 // If not revealed, conduct flag toggling
                 else if (!thisCell.isRevealed()) remainingMines += thisCell.isFlagged() ? -1 : 1;
-                // If revealed, reveal surrounding cells
-                else revealNeighbors(thisIndex);
+                // If there are enough flagged neighbors, allow area reveal
+                else if (checkEnoughFlags(thisIndex)) {
+                    revealNeighbors(thisIndex);
+                }
             }
             else if (e.getButton().equals(MouseButton.PRIMARY)) {
                 // Intercept operation if this is the first cell of the game to be revealed
@@ -76,6 +82,16 @@ public class GameContainer extends GridPane {
     // Build a game with default specifications
     GameContainer() {
         this(GameDefaults.EASY);
+    }
+
+    private boolean checkEnoughFlags(int cellIndex) {
+        final GameCell thisCell = gameTiles.get(cellIndex);
+        int nearby = thisCell.getNearby();
+        for (Integer nearbyCell : getNeighbors(cellIndex)) {
+            nearby += (gameTiles.get(nearbyCell).isFlagged()) ? -1 : 0;
+        }
+        if (nearby <= 0) return true;
+        else return false;
     }
 
     public boolean checkRevealedMines(GameCell cell) {

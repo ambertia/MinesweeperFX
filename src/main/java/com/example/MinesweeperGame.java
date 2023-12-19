@@ -2,6 +2,8 @@ package com.example;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -9,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.ToolBar;
@@ -37,34 +40,38 @@ public class MinesweeperGame extends Application {
     // Metainformation
     private GameSpecification difficulty;
     
-    // Application constructor to assign UI elements & complete fields
+    // Application constructor to fill out properties and build scenes
     public MinesweeperGame() {
         /*
          * Build Toolbar
          */
-
         // Label to display the number of mines the player has yet to flag
         minesLabel = new Label();
         minesLabel.getStyleClass().add("mineLabel");
 
-        // Custom difficulty selector using spinners
+        // Difficulty selector using spinners
         Spinner<Integer> columns = new Spinner<Integer>(1, 100, 30);
         columns.setPromptText("Columns");
         columns.setEditable(true);
+        columns.setPrefWidth(90);
         Spinner<Integer> rows = new Spinner<Integer>(1, 100, 20);
         rows.setPromptText("Rows");
         rows.setEditable(true);
+        rows.setPrefWidth(90);
         Spinner<Double> mines = new Spinner<Double>(0., 1., 0.17);
         mines.setPromptText("Mines");
         mines.setEditable(true);
+        mines.setPrefWidth(90);
+
         HBox customDifficultyWrapper = new HBox(columns, rows, mines);
+        customDifficultyWrapper.setSpacing(5);
         customDifficultyWrapper.setVisible(false);
         
         // Drop-down menu to select difficulty
         MenuButton difficultySelector = new MenuButton("Medium");
         // Manipulating the spinner values is a straightforward way to encode the difficulty,
         // so that the New Game button can simply look at the spinner each time and check the values.
-        // Also still allows default values to be read from GameDefaults
+        // Also allows default values to be read from GameDefaults
         MenuItem easy = new MenuItem("Easy");
         easy.setOnAction(e -> {
             difficultySelector.setText("Easy");
@@ -115,6 +122,7 @@ public class MinesweeperGame extends Application {
 
         // Add elements to toolbar
         toolbar = new ToolBar(minesLabel, newGame, difficultySelector, customDifficultyWrapper);
+        toolbar.setPrefHeight(50);
 
         /*
          * Fetch Display Information
@@ -124,35 +132,56 @@ public class MinesweeperGame extends Application {
         /*
          * Build Gameplay Scene
          */
+        // StackPane for game & popups
         gameAreaStack = new StackPane();
         final BorderPane activeGameDisplay = new BorderPane();
+
+        // Assign components to layout
         activeGameDisplay.setTop(toolbar);
         activeGameDisplay.setCenter(gameAreaStack);
+
+        // Build scene & style
         gameplayScene = new Scene(activeGameDisplay, displayBounds.getWidth(), displayBounds.getHeight());
         gameplayScene.getStylesheets().add("GameStyleControl.css");
 
         /*
          * Build Menu Scene
          */
-        final Button newGameMenu = new Button("New Game");
+        // Main menu submenu to start a new game of certain difficulty
+        final MenuButton newGameMenu = new MenuButton("New Game");
+        newGameMenu.setPrefSize(200, 50);
         newGameMenu.setOnAction(e -> {
             gameWindow.setScene(gameplayScene);
             startNewGame();
         });
+        // Main menu button to close the application
         final Button quit = new Button("Quit");
+        quit.setPrefSize(150, 50);
         quit.setOnAction(e -> {
             Platform.exit();
         });
-        final Label titleLabel = new Label("Minesweeper");
+
+        // Game title
+        final Label titleLabel = new Label("MinesweeperFX");
+        titleLabel.setStyle("-fx-font-size: 600%; -fx-font-family: \"Russo One\"");
+
+        // Pair the buttons together
         final HBox buttonRow = new HBox(newGameMenu, quit);
+        buttonRow.setPadding(new Insets(25));
+        buttonRow.setAlignment(Pos.CENTER);
+        buttonRow.setSpacing(150);
+        // Assemble the overarching layout & scene
         final VBox menuLayout = new VBox(titleLabel, buttonRow);
+        menuLayout.setAlignment(Pos.CENTER);
         menuScene = new Scene(menuLayout, displayBounds.getWidth(), displayBounds.getHeight());
         menuScene.getStylesheets().add("GameStyleControl.css");
     }
+
     public static void main(String[] args) {
         launch(args);
     }
 
+    // Launch the program
     public void start(Stage primaryStage) {
     
         // Configure primary window
@@ -163,9 +192,15 @@ public class MinesweeperGame extends Application {
         primaryStage.show();
         difficulty = GameDefaults.MEDIUM;
 
-        primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+        // Primary handler for in-game mouse clicks
+        gameplayScene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+
+            // Try to parse the event target from the list of cells
             final GameCell thisCell = activeGame.getCell(e.getTarget());
+            // If it isn't present (or e.g. user clicked on something that isn't a game tile) return
             if (thisCell == null) return;
+
+            // Scene controls game popups on win/lose conditions
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (thisCell.isMine()) {
                     thisCell.setStyle("-fx-border-color: #ff0000;");
@@ -173,6 +208,7 @@ public class MinesweeperGame extends Application {
                     return;
                 }
             }
+            // Right click reveals that reveal a mine are handled here
             else if (e.getButton().equals(MouseButton.SECONDARY)) {
                 if (thisCell.isRevealed()) {
                     if (activeGame.checkRevealedMines(thisCell)) {
@@ -181,43 +217,58 @@ public class MinesweeperGame extends Application {
                     }
                 }
             }
+            // If not the left or right mouse button, do nothing
             else return;
-            if (activeGame.remainingMines() == 0) {
-                final int revealedCells = activeGame.tallyRevealed();
-                if (revealedCells == activeGame.getGameSpec().boardSize - activeGame.getGameSpec().gameMines) {
-                    gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
-                    gameAreaStack.getChildren().add(gameAlert("You win!"));
-                }
+
+            // Count how many of the cells on the board are actually revealed
+            final int revealedCells = activeGame.tallyRevealed();
+
+            // If the player has revealed every cell that isn't a mine, they win
+            if (revealedCells == activeGame.getGameSpec().boardSize - activeGame.getGameSpec().gameMines) {
+                gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
+                gameAreaStack.getChildren().add(gameAlert("You win!"));
             }
-            minesLabel.setText(String.valueOf(activeGame.remainingMines()));
+
+            // Any time a click occurs on the grid, update the counter in the toolbar
+            minesLabel.setText(String.valueOf(activeGame.getRemainingMines()));
         });
         
     }
 
+    // Initialize a new game inside the game scene's StackPan
     final private void startNewGame() {
+        // Remove any and all children of the stackpane - including win/lose popups, and the game board itself
         gameAreaStack.getChildren().removeAll(gameAreaStack.getChildren());
+        // Create a new game container and discard the old one
         activeGame = new GameContainer(difficulty);
+        // Wrap the game board in a ZoomableScrollPane
         gameBoardWrapper = new ZoomableScrollPane(activeGame);
         gameBoardWrapper.getStyleClass().add("edge-to-edge");
+        // Add the wrapped game container to the StackPane
         gameAreaStack.getChildren().add(gameBoardWrapper);
+        // Scale to fit the game inside the area
+        // TODO this has wonky behavior
         gameBoardWrapper.scaleToFit(gameAreaStack, new Rectangle2D(0, 0, (activeGame.getGameSpec().Columns + 2) * GameCell.CELL_SIZE, (activeGame.getGameSpec().Rows + 2) * GameCell.CELL_SIZE));
-        minesLabel.setText(String.valueOf(activeGame.remainingMines()));
+        // Update the mine counter to the number of mines in the puzzle
+        minesLabel.setText(String.valueOf(activeGame.getRemainingMines()));
     }
 
     // Construct a game popup such as the ones when you win or lose the game
     final private VBox gameAlert(String message) {
 
+        // Three base UI components
         final Label alert = new Label(message);
         final Button newGame = new Button("New game");
         final Button quit = new Button("Quit");
 
+        // Layout has buttons wrapped in an HBox, then all assembled into a VBox
         final HBox buttonRow = new HBox(newGame, quit);
         final VBox mainLayout = new VBox();
         mainLayout.getChildren().addAll(alert, buttonRow);
-
         buttonRow.setAlignment(Pos.CENTER);
         mainLayout.setAlignment(Pos.CENTER);
 
+        // Button functionality
         newGame.setOnMouseClicked(e -> {
             startNewGame();
         });
@@ -226,6 +277,7 @@ public class MinesweeperGame extends Application {
             Platform.exit();
         });
 
+        // Hand back the new popup object
         return mainLayout;
     }
 }

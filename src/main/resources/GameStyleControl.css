@@ -3,18 +3,19 @@
     src: url(Russo_One.ttf);
 }
 
+.tool-bar {
+    -fx-font-size: 150%;
+}
+
 .root {
     -fx-background: #505050;
     -fx-padding: 0;
 }
 
-/* .scrollpane > .viewport {
-    -fx-background-color: transparent;
-}
-
-.scrollpane {
-    -fx-background-color: #505050;
+/* .label {
+    -fx-font-family: "Russo One";
 } */
+
 .mineLabel {
     -fx-font-family: "Russo One";
     -fx-text-fill: #ff0000;
@@ -22,7 +23,7 @@
 .mineLabel .text {
     -fx-stroke: #ff7f7f;
     -fx-stroke-width: 1px;
-    -fx-font-size: 150%;
+    -fx-font-size: 250%;
 }
 
 .gamecell {
@@ -44,7 +45,7 @@
 }
 
 /* Couldn't figure out how to have different cell label colors without this horribleness */
-/* TODO: This is dumb, and probably also won't play nice with custom user settings  */
+/* TODO: This is dumb, and probably also wouldn't play nice with custom user settings  */
 .n0 {
     -fx-text-fill: #000000;
 }

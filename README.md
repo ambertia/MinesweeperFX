@@ -16,4 +16,4 @@ This project was built using OpenJDK 17 and OpenJFX 17, and as such will require
 
 I plan to release portable JARs in the future. Beyond that, the software can be built by downloading the repository and running `mvn install` in the root of the repository, which will generated a shaded JAR in `target`.
 
-Alternatively, the program can be run directly by running mvn `javafx:run`.
+Alternatively, the program can be run directly by running `mvn javafx:run`.

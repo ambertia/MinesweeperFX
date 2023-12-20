@@ -3,17 +3,16 @@ package com.example;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Separator;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -72,7 +71,9 @@ public class MinesweeperGame extends Application {
         // Manipulating the spinner values is a straightforward way to encode the difficulty,
         // so that the New Game button can simply look at the spinner each time and check the values.
         // Also allows default values to be read from GameDefaults
-        MenuItem easy = new MenuItem("Easy");
+        ToggleGroup difficultyToggleGroup = new ToggleGroup();
+        RadioMenuItem easy = new RadioMenuItem("Easy");
+        easy.setToggleGroup(difficultyToggleGroup);
         easy.setOnAction(e -> {
             difficultySelector.setText("Easy");
             customDifficultyWrapper.setVisible(false);
@@ -80,7 +81,8 @@ public class MinesweeperGame extends Application {
             rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.EASY.Rows));
             mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.EASY.MineFraction, 0.01));
         });
-        MenuItem medium = new MenuItem("Medium");
+        RadioMenuItem medium = new RadioMenuItem("Medium");
+        medium.setToggleGroup(difficultyToggleGroup);
         medium.setOnAction(e -> {
             difficultySelector.setText("Medium");
             customDifficultyWrapper.setVisible(false);
@@ -88,7 +90,8 @@ public class MinesweeperGame extends Application {
             rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.MEDIUM.Rows));
             mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.MEDIUM.MineFraction, 0.01));
         });
-        MenuItem hard = new MenuItem("Hard");
+        RadioMenuItem hard = new RadioMenuItem("Hard");
+        hard.setToggleGroup(difficultyToggleGroup);
         hard.setOnAction(e -> {
             difficultySelector.setText("Hard");
             customDifficultyWrapper.setVisible(false);
@@ -96,7 +99,8 @@ public class MinesweeperGame extends Application {
             rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GameDefaults.HARD.Rows));
             mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., GameDefaults.HARD.MineFraction, 0.01));
         });
-        MenuItem custom = new MenuItem("Custom");
+        RadioMenuItem custom = new RadioMenuItem("Custom");
+        custom.setToggleGroup(difficultyToggleGroup);
         custom.setOnAction(e -> {
             difficultySelector.setText("Custom");
             customDifficultyWrapper.setVisible(true);
@@ -104,6 +108,7 @@ public class MinesweeperGame extends Application {
             rows.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, difficulty.Rows));
             mines.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0., 1., difficulty.MineFraction, 0.01));
         });
+        // Add and configure items
         difficultySelector.getItems().addAll(easy, medium, hard, custom);
 
         // Button to allow the user to start a new game
@@ -147,16 +152,9 @@ public class MinesweeperGame extends Application {
         /*
          * Build Menu Scene
          */
-        // Main menu submenu to start a new game of certain difficulty
-        final MenuButton newGameMenu = new MenuButton("New Game");
-        newGameMenu.setPrefSize(200, 50);
-        newGameMenu.setOnAction(e -> {
-            gameWindow.setScene(gameplayScene);
-            startNewGame();
-        });
         // Main menu button to close the application
         final Button quit = new Button("Quit");
-        quit.setPrefSize(150, 50);
+        // quit.setPrefSize(150, 50);
         quit.setOnAction(e -> {
             Platform.exit();
         });
@@ -165,13 +163,16 @@ public class MinesweeperGame extends Application {
         final Label titleLabel = new Label("MinesweeperFX");
         titleLabel.setStyle("-fx-font-size: 600%; -fx-font-family: \"Russo One\"");
 
-        // Pair the buttons together
-        final HBox buttonRow = new HBox(newGameMenu, quit);
-        buttonRow.setPadding(new Insets(25));
-        buttonRow.setAlignment(Pos.CENTER);
-        buttonRow.setSpacing(150);
+        // Set up the buttons, stealing some from the Toolbar
+
+        final VBox buttons = new VBox(newGame, difficultySelector, quit);
+        buttons.setPadding(new Insets(25));
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+        buttons.setPrefWidth(200);
+        buttons.setFillWidth(true);
         // Assemble the overarching layout & scene
-        final VBox menuLayout = new VBox(titleLabel, buttonRow);
+        final VBox menuLayout = new VBox(titleLabel, buttons);
         menuLayout.setAlignment(Pos.CENTER);
         menuScene = new Scene(menuLayout, displayBounds.getWidth(), displayBounds.getHeight());
         menuScene.getStylesheets().add("GameStyleControl.css");

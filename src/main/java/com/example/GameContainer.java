@@ -104,7 +104,7 @@ public class GameContainer extends GridPane {
                     openingCondition = false;
 
                     // Get the cell at this index again and reveal it
-                    // This is necessary as thisCell currently stores the cell at this position on the dummy board
+                    // This is necessary as thisCell currently stores the old cell at this position on the dummy board
                     thisCell = gameTiles.get(thisIndex);
                     thisCell.reveal();
                 }

@@ -122,6 +122,7 @@ public class MinesweeperGame extends Application {
             } catch (NumberFormatException error) {
                 System.out.println(error);
             }
+            
             startNewGame();
         });
 
@@ -238,6 +239,7 @@ public class MinesweeperGame extends Application {
 
     // Initialize a new game inside the game scene's StackPan
     final private void startNewGame() {
+        gameWindow.setScene(gameplayScene);
         // Remove any and all children of the stackpane - including win/lose popups, and the game board itself
         gameAreaStack.getChildren().removeAll(gameAreaStack.getChildren());
         // Create a new game container and discard the old one

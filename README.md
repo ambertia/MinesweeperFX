@@ -3,6 +3,9 @@
 #### Description:
 Personal project to create a functional implementation of the game Minesweeper using JavaFX libraries. Started out in July 2023, refactored, redesigned, and finished in December 2023 as a project for CS50x 2023.
 
+#### Repository
+If you're reading this from my submission rather than the repository, I have a repository at https://github.com/ambertia/MinesweeperFX
+
 #### Program Structure
 There are several classes that abstract away various functions of the game for convenience and design simplicity.
 
